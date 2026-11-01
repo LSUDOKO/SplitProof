@@ -149,6 +149,21 @@ The exact shape of HD region sub-scores in json format (e.g. pore forehead/nose/
 - Image spec: short side ≥ 480, long side ≤ 2560, < 10 MB. Units: 1–4 concerns = 4, 5–10 = 6.
 - SplitSide use: Claim Check only, labelled "Simulation"; never on the measurement path.
 
+## Preview-mode and profile tasks (verified 1 Nov 2026; fixtures in `tests/fixtures/youcam/<name>/`)
+All use `POST /s2s/v2.0/file` + presigned PUT, then `POST /s2s/v2.0/task/<kind>` and `GET /s2s/v2.0/task/<kind>/{task_id}`. Image results come back as `data.results.url` (PNG, may be 2 px narrower than the input, e.g. 1078×1440 for 1080×1440).
+
+| Kind | Body (besides `src_file_id`) | Result | SplitSide use |
+|---|---|---|---|
+| `makeup-vto` | `{version:"1.0", effects:[{category:"foundation", palettes:[{color:"#RRGGBB", colorIntensity, glowIntensity, coverageIntensity}]}]}` | url | Half-Face Shade Swatch |
+| `hair-color` | `{preset:"Chocolate Brown"}` (10 single presets used; dual-tone presets and custom `palettes` also exist) | url | Half-Head Hair Colour |
+| `skin-tone-analysis` | `{face_angle_strictness_level:"low"}` (default rejects ~7° roll with `error_face_angle_left_tilt`) | `results.color.{skin_color, hair_color, hair_color_name, eye_color_name…}` | Shade and hair shortlists |
+| `fitzpatrick-scale-analyzer` | `{version:"1.0", index:0}`; the `/pre-process` task (face boxes) is not needed for one face | `results.fitzpatrick_scale` "I"–"VI" | Irritation-sentinel threshold |
+| `bg-blur` | `{intensity:0–100}` | url | Share card (copy only) |
+| `skin-simulation` | concern intensities 0–1 | url | Claim Check |
+| `2d-vto/earring` | `ref_file_ids:[gold, silver]`, `source_info:{name: src}`, `object_infos:[{name: ref, parameter:{earring_is_right_ear, earring_need_remove_background, earring_scale (cm), earring_anchor_point}}]` | url | Gold vs silver (1 unit single, 2 stacked). **On hold:** with our own drawn hoop images (`scripts/assets`, transparent PNG, `earring_scale` 3–6) the engine placed both earrings on the correct ears but rendered them as a few pixels. Needs real product photos before it can ship |
+
+Not used: `hair-frizziness-detection` takes exactly 3 views (`src_file_ids` front/left/right) and returns one combined `hair_frizziness`, so there is no per-side value for a split trial (docs/14 H3 dropped).
+
 ## Concern names
 
 ### HD (SplitSide uses HD only)

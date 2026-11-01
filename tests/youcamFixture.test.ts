@@ -42,7 +42,7 @@ describe("recorded YouCam HD response", () => {
 const fixture = (name: string) => JSON.parse(readFileSync(`tests/fixtures/youcam/${name}/task-result.json`, "utf8"));
 
 describe("recorded single-image task responses", () => {
-  it.each(["simulation", "makeup-vto", "hair-color", "bg-blur"])("%s returns one result URL", async (name) => {
+  it.each(["simulation", "makeup-vto", "hair-color", "bg-blur", "earring"])("%s returns one result URL", async (name) => {
     const { AnyTaskStatus, ImageResult } = await import("@/lib/youcam/schemas");
     const r = AnyTaskStatus.parse(fixture(name));
     expect(r.data.task_status).toBe("success");

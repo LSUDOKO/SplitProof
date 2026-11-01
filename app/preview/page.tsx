@@ -9,7 +9,6 @@ import type { PreviewRecord } from "@/lib/types";
 const TOOLS = [
   { href: "/preview/shade", title: "Foundation shade swatch", body: "A shade on one half of your face, bare skin or a second shade on the other. See the seam before you buy." },
   { href: "/preview/hair", title: "Hair colour, half and half", body: "The new colour on one side of your head, your current colour on the other." },
-  { href: "/preview/earrings", title: "Gold or silver?", body: "One ear gold, one ear silver, in the same photo." },
 ];
 
 function Thumb({ p }: { p: PreviewRecord }) {
@@ -44,6 +43,7 @@ export default function PreviewHub() {
           </li>
         ))}
       </ul>
+      <p className="mt-4 text-sm text-muted">Coming next: gold or silver, one earring metal on each ear in the same photo.</p>
       {saved.length > 0 && (
         <Panel className="mt-5">
           <h2 className="font-semibold">Your previews</h2>
