@@ -5,8 +5,8 @@ const base = "inline-flex min-h-12 items-center justify-center gap-2 rounded-ful
 const variants = {
   primary: "bg-forest text-white shadow-[var(--shadow-soft)] hover:bg-forest-deep",
   secondary: "bg-raised text-ink shadow-[var(--shadow-soft)] hover:brightness-105",
-  danger: "bg-stop text-white hover:bg-stop/90",
-  ghost: "text-forest underline-offset-4 hover:underline",
+  danger: "bg-danger text-white hover:brightness-110",
+  ghost: "text-ink underline-offset-4 hover:underline",
 };
 type Variant = keyof typeof variants;
 
@@ -83,7 +83,7 @@ export function Segmented<T extends string>({ value, options, onChange, label }:
   return (
     <div role="radiogroup" aria-label={label} className="grid auto-cols-fr grid-flow-col gap-1 rounded-full bg-card p-1 shadow-[var(--shadow-soft)]">
       {options.map((o) => (
-        <button key={o.value} role="radio" aria-checked={value === o.value} onClick={() => onChange(o.value)} className={`min-h-10 rounded-full px-3 text-sm transition-colors ${value === o.value ? "bg-forest text-white" : "text-ink hover:bg-raised"}`}>
+        <button key={o.value} role="radio" aria-checked={value === o.value} onClick={() => onChange(o.value)} className={`min-h-11 rounded-full px-3 text-sm transition-colors ${value === o.value ? "bg-forest text-white" : "text-ink hover:bg-raised"}`}>
           {o.label}
         </button>
       ))}

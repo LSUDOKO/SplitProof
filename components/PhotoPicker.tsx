@@ -12,10 +12,14 @@ export function PhotoPicker({ onReady, label = "Take a front-facing photo" }: { 
   const [error, setError] = useState("");
   return (
     <div>
-      <label className="flex min-h-40 cursor-pointer flex-col items-center justify-center gap-2 rounded-panel border-2 border-dashed border-line bg-card p-6 text-center hover:border-ink/40">
-        <Camera size={28} aria-hidden="true" />
-        <span className="font-semibold">{busy ? "Finding your face…" : label}</span>
-        <span className="text-sm text-muted">Face the light, hair off your face, neutral expression.</span>
+      <label className="relative flex min-h-64 cursor-pointer flex-col items-center justify-center gap-3 rounded-panel border-2 border-dashed border-line bg-card p-6 text-center shadow-[var(--shadow-soft)] focus-within:ring-2 focus-within:ring-ink hover:border-ink/40">
+        <span className={`flex h-16 w-16 items-center justify-center rounded-full bg-forest text-white shadow-[var(--shadow-float)] ${busy ? "motion-safe:[animation:breathe_1.4s_ease-in-out_infinite]" : ""}`}>
+          <Camera size={26} strokeWidth={1.8} aria-hidden="true" />
+        </span>
+        <span className="text-lg" role={busy ? "status" : undefined}>
+          {busy ? "Finding your face…" : label}
+        </span>
+        <span className="max-w-[28ch] text-sm text-ink/70">Face the light, hair off your face, neutral expression.</span>
         <input
           type="file"
           accept="image/jpeg,image/png"
@@ -38,7 +42,11 @@ export function PhotoPicker({ onReady, label = "Take a front-facing photo" }: { 
           }}
         />
       </label>
-      {error && <p className="mt-2 text-sm text-stop" role="alert">{error}</p>}
+      {error && (
+        <p className="mt-3 rounded-2xl bg-stop-soft p-3 text-sm text-stop" role="alert">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

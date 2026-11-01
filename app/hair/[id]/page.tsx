@@ -1,11 +1,13 @@
 "use client";
+import { Camera, Check } from "lucide-react";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { AppShell } from "@/components/AppShell";
-import { Button, ButtonLink, DemoBadge, Panel, SideTag } from "@/components/ui";
+import { Reveal } from "@/components/motion";
+import { Button, ButtonLink, DemoBadge, Panel } from "@/components/ui";
 import { hairTrials } from "@/lib/db";
 import { runHairCheck, prepareView } from "@/lib/hair/client";
-import { FRIZZ_TERMS, HAIR_VERDICT_TEXT, judgeHair, type HairTrial } from "@/lib/hair/model";
+import { FRIZZ_TERMS, HAIR_VERDICT_TEXT, judgeHair, type HairCheck, type HairTrial } from "@/lib/hair/model";
 
 const VIEWS = [
   { key: "front", label: "Front", hint: "Look straight at the camera." },
@@ -13,6 +15,34 @@ const VIEWS = [
   { key: "right", label: "Your right side", hint: "Turn your head to the left so the camera sees your right side." },
 ] as const;
 type ViewKey = (typeof VIEWS)[number]["key"];
+
+/** Same blue/amber pair as everywhere, but ink text: coloured text on these tints misses 4.5:1 in light. */
+function SideChip({ kind, children }: { kind: "treated" | "control"; children: ReactNode }) {
+  const [tint, dot] = kind === "treated" ? ["bg-treated-soft", "bg-treated"] : ["bg-control-soft", "bg-control"];
+  return (
+    <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm ${tint}`}>
+      <span className={`h-2 w-2 rounded-full ${dot}`} aria-hidden="true" />
+      {children}
+    </span>
+  );
+}
+
+function CheckInTimeline({ checks }: { checks: HairCheck[] }) {
+  return (
+    <Reveal as="ol" stagger={0.07} className="mt-4 space-y-4 border-l-2 border-line pl-4">
+      {checks.map((c) => (
+        <li key={c.at} className="relative">
+          <span className="absolute -left-[1.4rem] top-1.5 h-2.5 w-2.5 rounded-full bg-forest-deep" aria-hidden="true" />
+          <p className="text-sm">{c.isBaseline ? "Baseline" : `Day ${c.day}`}</p>
+          <div className="mt-1.5 flex flex-wrap gap-1.5">
+            <SideChip kind="treated">Treated: {FRIZZ_TERMS[c.treated]}</SideChip>
+            <SideChip kind="control">Control: {FRIZZ_TERMS[c.control]}</SideChip>
+          </div>
+        </li>
+      ))}
+    </Reveal>
+  );
+}
 
 export default function HairTrialPage() {
   const { id } = useParams<{ id: string }>();
@@ -29,7 +59,7 @@ export default function HairTrialPage() {
     };
   }, [id]);
 
-  if (trial === undefined) return <AppShell back="/hair"><p className="mt-6 text-muted" role="status">Loading…</p></AppShell>;
+  if (trial === undefined) return <AppShell back="/hair"><p className="mt-6 text-ink/70" role="status">Loading…</p></AppShell>;
   if (trial === null)
     return (
       <AppShell back="/hair">
@@ -62,54 +92,40 @@ export default function HairTrialPage() {
 
   return (
     <AppShell back="/hair" title="SplitHair (beta)" action={trial.isDemo ? <DemoBadge /> : undefined}>
-      <h1 className="mt-2 text-[1.7rem] font-normal tracking-tight">{trial.product}</h1>
+      <h2 className="mt-2 text-[1.7rem] font-normal leading-tight tracking-tight">{trial.product}</h2>
       <div className="mt-3 flex flex-wrap gap-2">
-        <SideTag kind="treated">Product: your {trial.treatedSide.toUpperCase()} side</SideTag>
-        <SideTag kind="control">Control: your {control} side</SideTag>
+        <SideChip kind="treated">Product: your {trial.treatedSide.toUpperCase()} side</SideChip>
+        <SideChip kind="control">Control: your {control} side</SideChip>
       </div>
 
       <Panel className="mt-4" tone={v.verdict === "less_frizz" ? "good" : v.verdict === "more_frizz" ? "stop" : undefined}>
-        <p className="font-semibold">{HAIR_VERDICT_TEXT[v.verdict]}</p>
-        {v.diffs.length > 0 && <p className="mt-1 text-sm text-muted">Confidence: {v.confidence}. Frizz is rated in 4 steps, so small changes don&apos;t show.</p>}
+        <p className="text-lg leading-snug">{HAIR_VERDICT_TEXT[v.verdict]}</p>
+        {v.diffs.length > 0 && <p className="mt-2 text-sm text-ink/70">Confidence: {v.confidence}. Frizz is rated in 4 steps, so small changes don&apos;t show.</p>}
       </Panel>
 
       {trial.checks.length > 0 && (
         <Panel className="mt-3">
-          <h2 className="font-semibold">Check-ins</h2>
-          <table className="mt-3 w-full text-left text-sm">
-            <thead className="text-muted">
-              <tr>
-                <th className="pb-2 font-medium">Day</th>
-                <th className="pb-2 font-medium text-treated">Treated</th>
-                <th className="pb-2 font-medium text-control">Control</th>
-              </tr>
-            </thead>
-            <tbody>
-              {trial.checks.map((c) => (
-                <tr key={c.at} className="border-t border-line">
-                  <td className="py-2">{c.isBaseline ? "Baseline" : `Day ${c.day}`}</td>
-                  <td>{FRIZZ_TERMS[c.treated]}</td>
-                  <td>{FRIZZ_TERMS[c.control]}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <h3 className="text-lg font-normal">Check-ins</h3>
+          <CheckInTimeline checks={trial.checks} />
         </Panel>
       )}
 
       {!trial.isDemo && (
         <Panel className="mt-3">
-          <h2 className="font-semibold">{isBaseline ? "Baseline check (before using the product)" : "New check-in"}</h2>
-          <p className="mt-1 text-sm text-muted">Same place, same light, hair styled the usual way. Uses about 4 YouCam units.</p>
+          <h3 className="text-lg font-normal">{isBaseline ? "Baseline check (before using the product)" : "New check-in"}</h3>
+          <p className="mt-1 text-sm text-ink/70">Same place, same light, hair styled the usual way. Uses about 4 YouCam units.</p>
           <ul className="mt-3 space-y-2">
             {VIEWS.map((x) => (
               <li key={x.key}>
-                <label className={`flex min-h-14 cursor-pointer items-center justify-between gap-3 rounded-xl border p-3 ${views[x.key] ? "border-good bg-good-soft" : "border-line"}`}>
-                  <span>
-                    <span className="font-semibold">{x.label}</span>
-                    <span className="block text-sm text-muted">{x.hint}</span>
+                <label className={`flex min-h-14 cursor-pointer items-center justify-between gap-3 rounded-2xl p-3 focus-within:ring-2 focus-within:ring-ink ${views[x.key] ? "bg-good-soft" : "bg-raised"}`}>
+                  <span className="min-w-0">
+                    {x.label}
+                    <span className="block text-sm text-ink/70">{x.hint}</span>
                   </span>
-                  <span className="text-sm font-semibold">{views[x.key] ? "✓ Added" : "Add photo"}</span>
+                  <span className="flex shrink-0 items-center gap-1.5 text-sm">
+                    {views[x.key] ? <Check size={16} aria-hidden="true" /> : <Camera size={16} aria-hidden="true" />}
+                    {views[x.key] ? "Added" : "Add photo"}
+                  </span>
                   <input
                     type="file"
                     accept="image/jpeg,image/png"
@@ -124,7 +140,7 @@ export default function HairTrialPage() {
               </li>
             ))}
           </ul>
-          <Button className="mt-4 w-full" disabled={!ready || busy} onClick={checkIn}>
+          <Button className={`mt-4 w-full ${busy ? "motion-safe:[animation:breathe_1.4s_ease-in-out_infinite]" : ""}`} disabled={!ready || busy} onClick={checkIn}>
             {busy ? "Rating frizz on each side…" : "Rate both sides"}
           </Button>
           {error && <p className="mt-2 text-sm text-stop" role="alert">{error}</p>}

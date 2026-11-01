@@ -1,8 +1,9 @@
 "use client";
 import { useState } from "react";
 import { AppShell } from "@/components/AppShell";
+import { Reveal } from "@/components/motion";
 import { PhotoPicker } from "@/components/PhotoPicker";
-import { SplitPreview } from "@/components/SplitPreview";
+import { SplitPreview, WorkingPhoto } from "@/components/SplitPreview";
 import { Button, Panel } from "@/components/ui";
 import { newId, previews, settings } from "@/lib/db";
 import { bufferToBlob, getProfile, runImageTask, type PreparedPhoto, type SkinProfile } from "@/lib/preview/client";
@@ -21,6 +22,17 @@ const foundation = (hex: string) => ({
 interface Result {
   composite: PixelBuffer;
   seams: { shade: Shade; seam: Seam }[];
+}
+
+/** Ink text with a coloured dot: the coloured text tokens miss 4.5:1 on a light card. */
+function SeamChip({ seam }: { seam: Seam }) {
+  const dot = seam.verdict === "blends" ? "bg-good" : seam.verdict.startsWith("too") ? "bg-stop" : "bg-control";
+  return (
+    <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-raised px-3 py-1 text-sm">
+      <span className={`h-2 w-2 rounded-full ${dot}`} aria-hidden="true" />
+      {SEAM_LABELS[seam.verdict]}
+    </span>
+  );
 }
 
 export default function ShadeSwatch() {
@@ -85,87 +97,110 @@ export default function ShadeSwatch() {
     setSaved(true);
   };
 
+  const reset = () => {
+    setPhoto(null);
+    setProfile(null);
+    setResult(null);
+    setError("");
+  };
+
   const shortlist = profile ? shortlistShades(profile.skinColor) : [];
   const best = result && result.seams.length === 2 ? [...result.seams].sort((a, b) => a.seam.deltaE - b.seam.deltaE)[0] : null;
 
   return (
     <AppShell back="/preview" title="Shade swatch">
-      <p className="mt-1 text-muted">Makeup artists check a foundation on the jaw next to bare skin. This does the same on your photo: the shade on your left half, bare skin or a second shade on your right.</p>
+      <p className="mt-1 text-ink/70">Makeup artists check a foundation on the jaw next to bare skin. This does the same on your photo: the shade on your left half, bare skin or a second shade on your right.</p>
 
-      <div className="mt-4">{!photo ? <PhotoPicker onReady={onPhoto} /> : null}</div>
+      {!photo && (
+        <div className="mt-4">
+          <PhotoPicker onReady={onPhoto} />
+        </div>
+      )}
 
-      {photo && profile && !result && (
-        <Panel className="mt-3">
+      {photo && busy && (
+        <div className="mt-4">
+          <WorkingPhoto photo={photo.pixels} message={busy} />
+        </div>
+      )}
+
+      {photo && profile && !result && !busy && (
+        <Panel className="mt-4">
           <div className="flex items-center gap-3">
-            <span className="h-10 w-10 rounded-full border border-line" style={{ background: profile.skinColor }} aria-hidden="true" />
+            <span className="h-11 w-11 shrink-0 rounded-full ring-2 ring-raised" style={{ background: profile.skinColor }} aria-hidden="true" />
             <div>
-              <p className="font-semibold">Your skin tone, measured on this photo</p>
-              <p className="text-sm text-muted">{skinUndertone(profile.skinColor)} undertone · Fitzpatrick type {profile.fitzpatrick}</p>
+              <p>Your skin tone on this photo</p>
+              <p className="text-sm text-ink/70">
+                {skinUndertone(profile.skinColor)} undertone · Fitzpatrick type {profile.fitzpatrick}
+              </p>
             </div>
           </div>
-          <h2 className="mt-5 font-semibold">Pick one shade, or two to compare</h2>
-          <p className="text-sm text-muted">Closest to your skin first.</p>
+          <h2 className="mt-5 text-lg font-normal">Pick one shade, or two to compare</h2>
+          <p className="text-sm text-ink/70">Closest to your skin first.</p>
           <ul className="mt-3 grid grid-cols-3 gap-2">
             {(showAll ? SHADES : shortlist).map((s) => {
               const on = picked.some((p) => p.id === s.id);
               return (
                 <li key={s.id}>
-                  <button aria-pressed={on} onClick={() => toggle(s)} className={`w-full rounded-xl border p-2 text-left text-xs font-medium ${on ? "border-ink ring-2 ring-ink" : "border-line"}`}>
-                    <span className="mb-1.5 block h-8 rounded-lg" style={{ background: s.hex }} aria-hidden="true" />
+                  <button aria-pressed={on} onClick={() => toggle(s)} className={`h-full w-full rounded-2xl p-2 text-left text-xs transition-transform active:scale-[0.97] ${on ? "bg-raised ring-2 ring-ink" : "bg-raised/60"}`}>
+                    <span className="mb-1.5 block h-10 rounded-xl" style={{ background: s.hex }} aria-hidden="true" />
                     {s.name}
                   </button>
                 </li>
               );
             })}
           </ul>
-          <button className="mt-3 text-sm font-medium underline underline-offset-4" onClick={() => setShowAll(!showAll)}>
+          <button className="mt-2 min-h-11 text-sm underline underline-offset-4" onClick={() => setShowAll(!showAll)}>
             {showAll ? "Show my closest shades" : "Show all 24 shades"}
           </button>
-          <Button className="mt-4 w-full" disabled={!picked.length || !!busy} onClick={run}>
+          <Button className="mt-2 w-full" disabled={!picked.length} onClick={run}>
             {picked.length === 2 ? `Compare ${picked[0].name} and ${picked[1].name}` : picked.length ? `Try ${picked[0].name} next to bare skin` : "Pick a shade"}
           </Button>
         </Panel>
       )}
 
-      {busy && <p className="mt-4 text-muted" role="status">{busy}</p>}
       {error && (
-        <p className="mt-4 rounded-xl bg-stop-soft p-3 text-sm text-stop" role="alert">
+        <p className="mt-4 rounded-2xl bg-stop-soft p-3 text-sm text-stop" role="alert">
           {error}
         </p>
       )}
+      {photo && !profile && !busy && (
+        <Button variant="secondary" className="mt-3 w-full" onClick={reset}>
+          Use another photo
+        </Button>
+      )}
 
       {photo && result && (
-        <div className="mt-3 space-y-3">
-          <SplitPreview image={result.composite} landmarks={photo.landmarks} leftLabel={picked[0].name} rightLabel={picked[1]?.name ?? "Bare skin"} />
-          <Panel>
-            <h2 className="font-semibold">How well it blends</h2>
-            <ul className="mt-2 space-y-2">
-              {result.seams.map(({ shade, seam }) => (
-                <li key={shade.id} className="flex items-center justify-between gap-3">
-                  <span className="flex items-center gap-2">
-                    <span className="h-5 w-5 rounded-full" style={{ background: shade.hex }} aria-hidden="true" />
-                    {shade.name}
-                  </span>
-                  <span className={`font-semibold ${seam.verdict === "blends" ? "text-good" : seam.verdict.startsWith("too") ? "text-stop" : "text-control"}`}>
-                    {SEAM_LABELS[seam.verdict]}
-                  </span>
-                </li>
-              ))}
-            </ul>
-            {best && <p className="mt-3">Pick {best.shade.name}: it changes your skin colour least, so the edge at your jaw will show less.</p>}
-            <p className="mt-3 text-xs text-muted">Estimate on a simulated image (colour difference ΔE between your bare cheeks and the same cheeks with the shade). Real daylight can look different.</p>
-          </Panel>
-          <div className="flex flex-col gap-3">
-            <Button onClick={save} disabled={saved}>
-              {saved ? "Saved to your previews" : "Save this preview"}
-            </Button>
-            <Button variant="secondary" onClick={() => setResult(null)}>
-              Try other shades
-            </Button>
-            <Button variant="ghost" onClick={() => (setPhoto(null), setProfile(null), setResult(null))}>
-              Use another photo
-            </Button>
-          </div>
+        <div className="mt-4 space-y-3">
+          <SplitPreview image={result.composite} before={photo.pixels} landmarks={photo.landmarks} leftLabel={picked[0].name} rightLabel={picked[1]?.name ?? "Bare skin"} />
+          <Reveal delay={0.9} stagger={0.12} className="space-y-3">
+            <Panel>
+              <h2 className="text-lg font-normal">How well it blends</h2>
+              <ul className="mt-3 space-y-2">
+                {result.seams.map(({ shade, seam }) => (
+                  <li key={shade.id} className="flex items-center justify-between gap-3">
+                    <span className="flex min-w-0 items-center gap-2">
+                      <span className="h-5 w-5 shrink-0 rounded-full" style={{ background: shade.hex }} aria-hidden="true" />
+                      {shade.name}
+                    </span>
+                    <SeamChip seam={seam} />
+                  </li>
+                ))}
+              </ul>
+              {best && <p className="mt-3">Pick {best.shade.name}: it changes your skin colour least, so the edge at your jaw will show less.</p>}
+              <p className="mt-3 text-xs text-ink/70">Estimate on a simulated image (colour difference ΔE between your bare cheeks and the same cheeks with the shade). Real daylight can look different.</p>
+            </Panel>
+            <div className="flex flex-col gap-3">
+              <Button onClick={save} disabled={saved}>
+                {saved ? "Saved to your previews" : "Save this preview"}
+              </Button>
+              <Button variant="secondary" onClick={() => setResult(null)}>
+                Try other shades
+              </Button>
+              <button className="min-h-11 text-sm underline underline-offset-4" onClick={reset}>
+                Use another photo
+              </button>
+            </div>
+          </Reveal>
         </div>
       )}
     </AppShell>
