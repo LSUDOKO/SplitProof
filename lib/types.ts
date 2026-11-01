@@ -71,12 +71,19 @@ export interface Trial {
   status: TrialStatus;
   isDemo: boolean;
   createdAt: string;
+  /** What the user did with the verdict; powers the money-saved tracker. */
+  decision?: "kept" | "returned";
 }
 
 export interface ScanContext {
   sleepHours?: number;
   stress?: 1 | 2 | 3 | 4 | 5;
   period?: boolean;
+  /** Auto-filled from Open-Meteo when the user allows location (never affects the verdict). */
+  humidity?: number;
+  aqi?: number;
+  tempC?: number;
+  uvIndex?: number;
 }
 
 export interface ConcernScore {

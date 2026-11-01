@@ -1,15 +1,17 @@
 "use client";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Volume2, VolumeX } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { CheckIn } from "@/components/CheckIn";
 import { ScannerFrame } from "@/components/ScannerFrame";
 import { TrialState } from "@/components/TrialNotFound";
-import { Button, ButtonLink, Panel } from "@/components/ui";
+import { Button, ButtonLink, IconButton, Panel } from "@/components/ui";
 import { FACE_OVAL, POSE_MESSAGES, eulerFromMatrix, evaluatePose, framing, ghostDistance, type PoseIssue, type PoseReading } from "@/lib/capture/alignment";
 import { analyseOnYoucam, measureBurdens } from "@/lib/capture/analyse";
 import { grabFrame, portraitCrop, toJpeg } from "@/lib/capture/frame";
 import { blendshape, getLandmarker, toPixels } from "@/lib/capture/landmarks";
+import { setVoiceEnabled, speak, voiceEnabled, voiceSupported } from "@/lib/capture/voice";
 import { LIGHT_MESSAGES, evaluateLight, readLight, type LightIssue } from "@/lib/capture/lightGate";
 import { BASELINE_SCANS, POSE_GATE } from "@/lib/config";
 import { events as eventsRepo, media as mediaRepo, newId, scans as scansRepo, trials as trialsRepo } from "@/lib/db";
@@ -43,6 +45,17 @@ export default function ScanPage() {
   const [savedScan, setSavedScan] = useState<Scan | null>(null);
   const baselineLandmarks = useRef<{ lm: Landmarks; width: number } | null>(null);
   const capturing = useRef(false);
+  const [voice, setVoice] = useState(false);
+
+  // Spoken guidance (A10): reads the current hint aloud when switched on.
+  useEffect(() => {
+    // localStorage only exists after mount, so the saved choice can't be the initial state.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setVoice(voiceEnabled());
+  }, []);
+  useEffect(() => {
+    if (voice) speak(hint);
+  }, [hint, voice]);
 
   const trial = data?.trial;
   const scans = data?.scans ?? [];
@@ -250,7 +263,24 @@ export default function ScanPage() {
     );
 
   return (
-    <AppShell back={`/trial/${trial.id}`} title={practice ? "Practice scan" : isBaseline ? `Baseline ${baselineScans.length + 1} of ${BASELINE_SCANS}` : "Scan"}>
+    <AppShell
+      back={`/trial/${trial.id}`}
+      title={practice ? "Practice scan" : isBaseline ? `Baseline ${baselineScans.length + 1} of ${BASELINE_SCANS}` : "Face scanner"}
+      action={
+        voiceSupported() ? (
+          <IconButton
+            label={voice ? "Turn voice guidance off" : "Turn voice guidance on"}
+            aria-pressed={voice}
+            onClick={() => {
+              setVoiceEnabled(!voice);
+              setVoice(!voice);
+            }}
+          >
+            {voice ? <Volume2 size={18} aria-hidden="true" /> : <VolumeX size={18} aria-hidden="true" />}
+          </IconButton>
+        ) : undefined
+      }
+    >
       {practice && (
         <p className="mb-3 rounded-xl bg-treated-soft p-3 text-sm text-treated">Practice mode for the demo trial: the camera checks run on your phone, nothing is uploaded or saved.</p>
       )}

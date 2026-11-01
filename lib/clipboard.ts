@@ -7,16 +7,35 @@ export async function copyText(text: string): Promise<boolean> {
   }
 }
 
-/** Calendar reminder (.ics) for a scan day — works on Android, iOS and desktop without push permissions. */
+const fmtIcs = (d: Date) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+
+/** RFC 5545 calendar text, one 15-minute event per entry. Pure, so it can be unit-tested. */
+export function buildIcs(events: { dateISO: string; title: string; note?: string }[], stamp = new Date()): string {
+  const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//SplitSide//EN"];
+  events.forEach((e, i) => {
+    const start = new Date(e.dateISO);
+    lines.push(
+      "BEGIN:VEVENT",
+      `UID:${fmtIcs(start)}-${i}@splitside`,
+      `DTSTAMP:${fmtIcs(stamp)}`,
+      `DTSTART:${fmtIcs(start)}`,
+      `DTEND:${fmtIcs(new Date(start.getTime() + 15 * 60_000))}`,
+      `SUMMARY:${e.title}`,
+      `DESCRIPTION:${(e.note ?? "").replace(/\n/g, "\\n")}`,
+      "END:VEVENT",
+    );
+  });
+  lines.push("END:VCALENDAR");
+  return lines.join("\r\n");
+}
+
+/** Calendar reminder(s) as a download: works on Android, iOS and desktop without push permissions. */
 export function downloadIcs(dateISO: string, title: string, note = "") {
-  const start = new Date(dateISO);
-  const fmt = (d: Date) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
-  const end = new Date(start.getTime() + 15 * 60_000);
-  const ics = [
-    "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//SplitSide//EN", "BEGIN:VEVENT",
-    `UID:${crypto.randomUUID()}@splitside`, `DTSTAMP:${fmt(new Date())}`, `DTSTART:${fmt(start)}`, `DTEND:${fmt(end)}`,
-    `SUMMARY:${title}`, `DESCRIPTION:${note.replace(/\n/g, "\\n")}`, "END:VEVENT", "END:VCALENDAR",
-  ].join("\r\n");
+  downloadIcsEvents([{ dateISO, title, note }]);
+}
+
+export function downloadIcsEvents(events: { dateISO: string; title: string; note?: string }[]) {
+  const ics = buildIcs(events);
   const url = URL.createObjectURL(new Blob([ics], { type: "text/calendar" }));
   const a = Object.assign(document.createElement("a"), { href: url, download: "splitside-scan.ics" });
   a.click();

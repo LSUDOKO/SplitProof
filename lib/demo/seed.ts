@@ -60,7 +60,7 @@ const SPECS: DemoSpec[] = [
     scans: [
       { day: 3, delta: { hd_acne: -0.02, hd_redness: 0.01 }, context: { sleepHours: 7 }, adherence: 1 },
       { day: 5, delta: { hd_acne: -0.07, hd_redness: -0.01 }, context: { sleepHours: 7.5 }, adherence: 1 },
-      { day: 7, delta: { hd_acne: -0.12, hd_redness: 0.02 }, shared: 0.35, context: { sleepHours: 4, stress: 4 }, adherence: 0.9 },
+      { day: 7, delta: { hd_acne: -0.12, hd_redness: 0.02 }, shared: 0.35, context: { sleepHours: 4, stress: 4, humidity: 41, aqi: 182 }, adherence: 0.9 },
       { day: 9, delta: { hd_acne: -0.19, hd_redness: 0 }, context: { sleepHours: 7 }, adherence: 1 },
       { day: 11, delta: { hd_acne: -0.24, hd_redness: -0.02 }, shared: 0.15, context: { sleepHours: 6, period: true }, adherence: 1 },
       { day: 13, delta: { hd_acne: -0.29, hd_redness: 0.01 }, context: { sleepHours: 7 }, adherence: 0.9 },
@@ -165,6 +165,8 @@ export function buildDemo(now = new Date().toISOString()) {
       createdAt: start,
       isDemo: true,
       returnDeadline: spec.deadlineInDays === undefined ? undefined : addDays(now, spec.deadlineInDays),
+      // One past decision so the money-saved tracker has something honest to show in the demo.
+      decision: spec.trial.id === "demo-brightening-essence" ? "returned" : undefined,
     };
     trials.push(t);
     const mk = (i: number, day: number, a: (c: ConcernKey) => number, s: Partial<DemoScanSpec> = {}): Scan => {

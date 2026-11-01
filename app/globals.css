@@ -25,6 +25,35 @@
   --shadow-float: 0 18px 40px -18px rgb(30 55 30 / 0.55);
 }
 
+[data-theme="dark"] {
+  --color-paper: #131a15;
+  --color-card: #1d2720;
+  --color-raised: #27332a;
+  --color-ink: #e7f0e4;
+  --color-muted: #9aab9c;
+  --color-line: #344338;
+  --color-forest: #5a7a58;
+  --color-forest-deep: #47624a;
+  --color-night: #0b100c;
+  --color-treated: #7fb0f2;
+  --color-treated-soft: #1e3046;
+  --color-control: #e6a94f;
+  --color-control-soft: #3a2d17;
+  --color-good: #86c97f;
+  --color-good-soft: #1f3820;
+  --color-stop: #f08f7d;
+  --color-stop-soft: #41231c;
+  --shadow-soft: 0 1px 0 rgb(255 255 255 / 0.05) inset, 0 14px 30px -20px rgb(0 0 0 / 0.8);
+  --shadow-float: 0 18px 40px -18px rgb(0 0 0 / 0.9);
+  --bg-glow: #1d2720;
+  color-scheme: dark;
+}
+
+/* Hidden until GSAP reveals them; the head script removes .motion after 4 s as a safety net. */
+.motion [data-reveal] {
+  visibility: hidden;
+}
+
 html {
   background: var(--color-paper);
   color: var(--color-ink);
@@ -34,7 +63,7 @@ html {
 body {
   font-family: var(--font-sans);
   font-feature-settings: "tnum" 1;
-  background: radial-gradient(120% 60% at 50% 0%, #e8f1e5 0%, var(--color-paper) 60%) fixed;
+  background: radial-gradient(120% 60% at 50% 0%, var(--bg-glow, #e8f1e5) 0%, var(--color-paper) 60%) fixed;
 }
 
 :focus-visible {
@@ -65,4 +94,17 @@ body {
 @keyframes scanline {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(calc(var(--h, 300px) - 4px)); }
+}
+
+@keyframes ring-pulse {
+  0% { box-shadow: 0 0 0 0 rgb(75 103 74 / 0.45); }
+  70%, 100% { box-shadow: 0 0 0 14px rgb(75 103 74 / 0); }
+}
+
+/* Printable dermatologist report: paper, no app chrome. */
+@media print {
+  [data-noprint] { display: none !important; }
+  html, body { background: #fff !important; color: #000 !important; }
+  main { padding: 0 !important; }
+  section { box-shadow: none !important; break-inside: avoid; border: 1px solid #ccc; }
 }
