@@ -183,7 +183,7 @@ Requires Node 22+.
 ```bash
 git clone https://github.com/LSUDOKO/SplitProof.git
 cd SplitProof
-npm install --legacy-peer-deps
+npm install
 cp .env.example .env         # then fill in the keys
 npm run dev                  # http://localhost:3000
 ```
