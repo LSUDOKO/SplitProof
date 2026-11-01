@@ -10,12 +10,14 @@ import { getLandmarker, toPixels } from "@/lib/capture/landmarks";
 import { readLight } from "@/lib/capture/lightGate";
 import { buildRoiIndex, faceGeometry } from "@/lib/split/rois";
 import type { ScanMedia } from "@/lib/types";
+import { drawPrivatePhoto } from "@/lib/share/draw";
 
 export function YoucamDevTool() {
   const [log, setLog] = useState<string>("");
   const [media, setMedia] = useState<{ m: ScanMedia; w: number; h: number } | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [debug, setDebug] = useState("");
+  const [privateImg, setPrivate] = useState("");
 
   const run = async (upload: boolean) => {
     if (!file) return;
@@ -39,6 +41,10 @@ export function YoucamDevTool() {
     x2.fillStyle = "white";
     for (const i of [10, 151, 9, 8, 168, 6, 197, 195, 5, 4, 1, 19, 94, 2, 164, 0, 17, 18, 200, 199, 175, 152, 234, 454, 374, 145, 327, 98, 291, 61]) x2.fillRect(pts[i][0] - 6, pts[i][1] - 6, 12, 12);
     setDebug(c2.toDataURL("image/jpeg", 0.7));
+    // Share-card privacy render (eyes pixelated, mirrored, tinted) on a copy.
+    const c3 = Object.assign(document.createElement("canvas"), { width: 540, height: 720 });
+    drawPrivatePhoto(c3.getContext("2d")!, { width, height, data: ctx.getImageData(0, 0, width, height).data }, pts, "left", { x: 0, y: 0, w: 540, h: 720 });
+    setPrivate(c3.toDataURL("image/jpeg", 0.8));
     let out: Record<string, unknown> = { width, height, roiPixels: roi.left.length, light, faceWidth: framing(pts, width, height).faceWidth };
     setLog(JSON.stringify(out, null, 2));
     if (!upload) return;
@@ -59,6 +65,7 @@ export function YoucamDevTool() {
         <Button onClick={() => run(true).catch((e) => setLog(String(e)))} disabled={!file}>Analyse (16 units)</Button>
       </div>
       {debug && <img id="debug" src={debug} alt="ROI debug overlay" className="w-full" />}
+      {privateImg && <img id="private" src={privateImg} alt="Share-card privacy render" className="w-full" />}
       {media && <SplitPhoto media={media.m} treatedSide="left" width={media.w} height={media.h} />}
       <pre id="log" className="whitespace-pre-wrap text-xs">{log}</pre>
     </main>

@@ -7,6 +7,7 @@ import { CopyBox } from "@/components/CopyBox";
 import { DeadlineChip } from "@/components/DeadlineChip";
 import { SplitFace } from "@/components/SplitFace";
 import { ScanCompare } from "@/components/ScanCompare";
+import { ShareTools } from "@/components/ShareTools";
 import { TrialState } from "@/components/TrialNotFound";
 import { Button, ButtonLink, DemoBadge, Panel } from "@/components/ui";
 import { draftMessage } from "@/lib/agent/drafts";
@@ -101,6 +102,7 @@ export default function VerdictPage() {
       </Panel>
 
       {!t.isDemo && !bad && <ClaimCheck trial={t} scans={scans} verdict={v} />}
+      <ShareTools trial={t} scans={scans} verdict={v} />
 
       <div className="mt-4 flex flex-col gap-3">
         {t.returnDeadline && (
@@ -134,7 +136,7 @@ export default function VerdictPage() {
           </>
         )}
         <Button variant="secondary" onClick={() => setPanel(panel === "share" ? null : "share")}>
-          Share result
+          Copy a text summary
         </Button>
         {panel === "share" && <CopyBox text={draftMessage(summary, "share_summary")} label="Copy summary" />}
         {bad && t.status !== "stopped" && (
