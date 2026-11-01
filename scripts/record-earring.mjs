@@ -20,14 +20,14 @@ const upload = async (path, type) => {
   await fetch(f.requests[0].url, { method: "PUT", headers: f.requests[0].headers, body: bytes });
   return f.file_id;
 };
-const [src, gold, silver] = await Promise.all([upload(photo, "image/jpeg"), upload("scripts/assets/hoop-gold.png", "image/png"), upload("scripts/assets/hoop-silver.png", "image/png")]);
+const [src, gold, silver] = await Promise.all([upload(photo, "image/jpeg"), upload("public/preview/hoop-gold.png", "image/png"), upload("public/preview/hoop-silver.png", "image/png")]);
 const body = {
   src_file_id: src,
   ref_file_ids: [gold, silver],
   source_info: { name: src },
   object_infos: [
-    { name: gold, parameter: { earring_is_right_ear: true, earring_need_remove_background: false, earring_scale: 6, earring_anchor_point: [200, 62] } },
-    { name: silver, parameter: { earring_is_right_ear: false, earring_need_remove_background: false, earring_scale: 6, earring_anchor_point: [200, 62] } },
+    { name: gold, parameter: { earring_is_right_ear: true, earring_need_remove_background: false } },
+    { name: silver, parameter: { earring_is_right_ear: false, earring_need_remove_background: false } },
   ],
 };
 const task = await call("/s2s/v2.0/task/2d-vto/earring", { method: "POST", body: JSON.stringify(body) });

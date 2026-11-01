@@ -30,15 +30,24 @@ export const TASK_PARAMS = {
   "bg-blur": z.object({ intensity: pct }),
   "skin-tone-analysis": z.object({ face_angle_strictness_level: z.enum(["strict", "high", "medium", "low", "flexible"]).optional() }),
   "fitzpatrick-scale-analyzer": z.object({ version: z.literal("1.0"), index: z.number().int().min(0) }),
+  // Bodies below are built server-side from uploaded file ids (never passed through from the client).
+  "2d-vto/earring": z.object({
+    ref_file_ids: z.array(z.string()).min(1).max(2),
+    source_info: z.object({ name: z.string() }),
+    object_infos: z.array(z.object({ name: z.string(), parameter: z.object({ earring_is_right_ear: z.boolean(), earring_need_remove_background: z.boolean() }) })).min(1).max(2),
+  }),
+  "hair-frizziness-detection": z.object({ src_file_ids: z.array(z.string()).length(3) }),
 } as const;
 
 export type TaskKind = keyof typeof TASK_PARAMS;
 export const isTaskKind = (k: string): k is TaskKind => k in TASK_PARAMS;
 
-export async function startTask(kind: TaskKind, fileId: string, params: unknown): Promise<string> {
+/** `fileId` null = the body carries its own file ids (frizz takes three views). */
+export async function startTask(kind: TaskKind, fileId: string | null, params: unknown): Promise<string> {
   const parsed = TASK_PARAMS[kind].safeParse(params);
   if (!parsed.success) throw new YoucamError("error_invalid_params", 400, parsed.error.issues[0]?.message);
-  const res = await youcamJson(`/s2s/v2.0/task/${kind}`, TaskCreated, { method: "POST", body: JSON.stringify({ src_file_id: fileId, ...(parsed.data as object) }) });
+  const body = fileId ? { src_file_id: fileId, ...(parsed.data as object) } : parsed.data;
+  const res = await youcamJson(`/s2s/v2.0/task/${kind}`, TaskCreated, { method: "POST", body: JSON.stringify(body) });
   return res.data.task_id;
 }
 
@@ -53,7 +62,7 @@ export async function pollTask(kind: TaskKind, taskId: string): Promise<Polled> 
 }
 
 /** Server-side wait for short analysis tasks (skin tone, Fitzpatrick finish in ~2–4 s). */
-export async function runToCompletion(kind: TaskKind, fileId: string, params: unknown, timeoutMs = 45_000): Promise<unknown> {
+export async function runToCompletion(kind: TaskKind, fileId: string | null, params: unknown, timeoutMs = 45_000): Promise<unknown> {
   const id = await startTask(kind, fileId, params);
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {

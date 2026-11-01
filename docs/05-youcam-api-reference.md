@@ -160,7 +160,7 @@ All use `POST /s2s/v2.0/file` + presigned PUT, then `POST /s2s/v2.0/task/<kind>`
 | `fitzpatrick-scale-analyzer` | `{version:"1.0", index:0}`; the `/pre-process` task (face boxes) is not needed for one face | `results.fitzpatrick_scale` "I"–"VI" | Irritation-sentinel threshold |
 | `bg-blur` | `{intensity:0–100}` | url | Share card (copy only) |
 | `skin-simulation` | concern intensities 0–1 | url | Claim Check |
-| `2d-vto/earring` | `ref_file_ids:[gold, silver]`, `source_info:{name: src}`, `object_infos:[{name: ref, parameter:{earring_is_right_ear, earring_need_remove_background, earring_scale (cm), earring_anchor_point}}]` | url | Gold vs silver (1 unit single, 2 stacked). **On hold:** with our own drawn hoop images (`scripts/assets`, transparent PNG, `earring_scale` 3–6) the engine placed both earrings on the correct ears but rendered them as a few pixels. Needs real product photos before it can ship |
+| `2d-vto/earring` | `ref_file_ids:[gold, silver]`, `source_info:{name: src}`, `object_infos:[{name: ref, parameter:{earring_is_right_ear, earring_need_remove_background, earring_scale (cm), earring_anchor_point}}]` | url | Gold vs silver (1 unit single, 2 stacked). Needs real product photos with a transparent background (`earring_need_remove_background:false`, no `earring_scale`): drawn icons rendered as a few pixels. **`earring_is_right_ear` refers to the IMAGE's right**, i.e. the user's left ear in an un-mirrored selfie |
 
 Not used: `hair-frizziness-detection` takes exactly 3 views (`src_file_ids` front/left/right) and returns one combined `hair_frizziness`, so there is no per-side value for a split trial (docs/14 H3 dropped).
 

@@ -84,3 +84,13 @@ describe("hair shortlist", () => {
     expect(hairShortlist("cool")[0].preset).toBe("Ash Gray");
   });
 });
+
+describe("earrings", () => {
+  it("maps the user's ear to the API's image-side flag", async () => {
+    const { earringObjects } = await import("@/lib/preview/earrings");
+    const [gold, silver] = earringObjects("left", { gold: "g", silver: "s" });
+    // User's left ear is the image's right in an un-mirrored selfie.
+    expect(gold).toMatchObject({ name: "g", parameter: { earring_is_right_ear: true } });
+    expect(silver).toMatchObject({ name: "s", parameter: { earring_is_right_ear: false } });
+  });
+});

@@ -63,8 +63,12 @@ export async function uploadImage(image: FormDataEntryValue | null, prefix: stri
   if (!(image instanceof File)) throw new YoucamError("missing_image", 400);
   if (!IMAGE_TYPES.has(image.type)) throw new YoucamError("bad_image_type", 400);
   if (image.size > MAX_BYTES) throw new YoucamError("error_exceed_max_image_size", 400);
-  const bytes = await image.arrayBuffer();
-  const upload = await registerFile(`${prefix}_${Date.now()}.${image.type === "image/png" ? "png" : "jpg"}`, image.type, bytes.byteLength);
+  return uploadBytes(await image.arrayBuffer(), image.type, prefix);
+}
+
+/** Register + PUT raw bytes (form images, or app assets like the earring product photos). */
+export async function uploadBytes(bytes: ArrayBuffer, type: string, prefix: string): Promise<string> {
+  const upload = await registerFile(`${prefix}_${Date.now()}.${type === "image/png" ? "png" : "jpg"}`, type, bytes.byteLength);
   await uploadToPresigned(upload, bytes);
   return upload.fileId;
 }

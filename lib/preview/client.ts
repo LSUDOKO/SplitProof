@@ -34,7 +34,18 @@ export async function runImageTask(kind: string, image: Blob, params: object): P
   form.set("image", image, "photo.jpg");
   form.set("kind", kind);
   form.set("params", JSON.stringify(params));
-  const created = await (await fetch("/api/preview", { method: "POST", body: form })).json();
+  return pollImage(kind, await (await fetch("/api/preview", { method: "POST", body: form })).json());
+}
+
+/** Gold on one ear, silver on the other, in one call. */
+export async function runEarrings(image: Blob, goldOn: "left" | "right"): Promise<PixelBuffer> {
+  const form = new FormData();
+  form.set("image", image, "photo.jpg");
+  form.set("goldOn", goldOn);
+  return pollImage("2d-vto/earring", await (await fetch("/api/earrings", { method: "POST", body: form })).json());
+}
+
+async function pollImage(kind: string, created: { taskId?: string; message?: string }): Promise<PixelBuffer> {
   if (!created.taskId) throw new Error(created.message ?? "The preview couldn't start. Please try again.");
   for (let i = 0; i < 45; i++) {
     await sleep(2000);
