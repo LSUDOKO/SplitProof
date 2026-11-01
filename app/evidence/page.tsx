@@ -10,7 +10,7 @@ const pct = (a: number, b: number) => Math.round((a / b) * 100);
 export default function Evidence() {
   return (
     <AppShell action={<DemoBadge />}>
-      <h1 className="mt-2 text-2xl font-bold tracking-tight">Evidence board</h1>
+      <h1 className="mt-2 text-[1.7rem] font-normal tracking-tight">Evidence board</h1>
       <p className="mt-1 text-muted">Anonymous split-face results from home trials, pooled per product. No photos, no names.</p>
       <p className="mt-3 rounded-xl border border-dashed border-muted p-3 text-sm text-muted">
         These numbers are example data to show how the board works. Sharing your own anonymous results is coming next.

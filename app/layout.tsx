@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { Schibsted_Grotesk } from "next/font/google";
+import { Public_Sans } from "next/font/google";
 import { ServiceWorker } from "@/components/ServiceWorker";
 import "./globals.css";
 
-const font = Schibsted_Grotesk({ variable: "--font-schibsted", subsets: ["latin"] });
+const font = Public_Sans({ variable: "--font-public", subsets: ["latin"], weight: ["300", "400", "500", "600"] });
 
 export const metadata: Metadata = {
   title: { default: "SplitSide — your face is the control group", template: "%s · SplitSide" },
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   appleWebApp: { capable: true, title: "SplitSide", statusBarStyle: "default" },
 };
 
-export const viewport: Viewport = { themeColor: "#f4f6f8", width: "device-width", initialScale: 1 };
+export const viewport: Viewport = { themeColor: "#dde9da", width: "device-width", initialScale: 1 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

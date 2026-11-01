@@ -123,7 +123,7 @@ export default function NewTrial() {
 
       {step === "product" && (
         <div className="mt-3 space-y-5">
-          <h1 className="text-2xl font-bold tracking-tight">What are you testing?</h1>
+          <h1 className="text-[1.7rem] font-normal tracking-tight">What are you testing?</h1>
           <div className="grid grid-cols-2 gap-2 rounded-full border border-line p-1" role="radiogroup" aria-label="Product type">
             {[false, true].map((w) => (
               <button
@@ -209,7 +209,7 @@ export default function NewTrial() {
 
       {step === "goals" && (
         <div className="mt-3 space-y-5">
-          <h1 className="text-2xl font-bold tracking-tight">What should it improve?</h1>
+          <h1 className="text-[1.7rem] font-normal tracking-tight">What should it improve?</h1>
           <div className="flex flex-wrap gap-2">
             {GOALS.map((g) => {
               const on = goals.includes(g.label);
@@ -230,7 +230,7 @@ export default function NewTrial() {
 
       {step === "deadline" && plan && (
         <div className="mt-3 space-y-5">
-          <h1 className="text-2xl font-bold tracking-tight">When can you last return it?</h1>
+          <h1 className="text-[1.7rem] font-normal tracking-tight">When can you last return it?</h1>
           <Field label="Return deadline">
             <input type="date" className={inputClass} value={deadline} min={today.slice(0, 10)} disabled={noReturn} onChange={(e) => setDeadline(e.target.value)} />
           </Field>
@@ -257,7 +257,7 @@ export default function NewTrial() {
 
       {step === "reveal" && (
         <div className="mt-3 space-y-5 text-center">
-          <h1 className="text-2xl font-bold tracking-tight">{side ? (wearTest ? `Wear it on your ${side.toUpperCase()} half only.` : `Apply it to your ${side.toUpperCase()} ${zone === "under_eyes" ? "under-eye" : "cheek"} only.`) : "Let chance pick the side"}</h1>
+          <h1 className="text-[1.7rem] font-normal tracking-tight">{side ? (wearTest ? `Wear it on your ${side.toUpperCase()} half only.` : `Apply it to your ${side.toUpperCase()} ${zone === "under_eyes" ? "under-eye" : "cheek"} only.`) : "Let chance pick the side"}</h1>
           {!side && <p className="text-muted">A random side stops you from choosing the cheek that already looks better.</p>}
           <div className="flex justify-center py-2" style={{ perspective: 600 }}>
             <div style={{ animation: flipping ? "coin 1.1s ease-out" : undefined, transformStyle: "preserve-3d" }}>

@@ -19,7 +19,7 @@ export default function Passport() {
 
   return (
     <AppShell action={anyDemo ? <DemoBadge /> : undefined}>
-      <h1 className="mt-2 text-2xl font-bold tracking-tight">Skin Passport</h1>
+      <h1 className="mt-2 text-[1.7rem] font-normal tracking-tight">Skin Passport</h1>
       <p className="mt-1 text-muted">What your own trials say about your skin.</p>
 
       <Panel className="mt-5">

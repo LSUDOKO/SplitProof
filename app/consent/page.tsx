@@ -22,7 +22,7 @@ export default function Consent() {
       <header className="flex h-16 items-center">
         <Logo />
       </header>
-      <h1 className="mt-4 text-2xl font-bold tracking-tight">Before you start</h1>
+      <h1 className="mt-4 text-[1.7rem] font-normal tracking-tight">Before you start</h1>
       <ul className="mt-6 space-y-4">
         {POINTS.map((p) => (
           <li key={p} className="flex gap-3">

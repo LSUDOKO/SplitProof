@@ -1,12 +1,12 @@
 import Link from "next/link";
 import type { ComponentProps, ReactNode } from "react";
 
-const base = "inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 text-base font-semibold transition-colors disabled:opacity-40";
+const base = "inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 text-base font-medium transition-colors disabled:opacity-40";
 const variants = {
-  primary: "bg-ink text-white hover:bg-ink/85",
-  secondary: "border border-line bg-card text-ink hover:border-ink/40",
+  primary: "bg-forest text-white shadow-[var(--shadow-soft)] hover:bg-forest-deep",
+  secondary: "bg-raised text-ink shadow-[var(--shadow-soft)] hover:bg-white/80",
   danger: "bg-stop text-white hover:bg-stop/90",
-  ghost: "text-ink underline-offset-4 hover:underline",
+  ghost: "text-forest underline-offset-4 hover:underline",
 };
 type Variant = keyof typeof variants;
 
@@ -20,12 +20,29 @@ export function ButtonLink({ variant = "primary", className = "", ...p }: Compon
 
 export function Panel({ children, className = "", tone }: { children: ReactNode; className?: string; tone?: "good" | "stop" | "treated" | "control" }) {
   const tones = { good: "bg-good-soft", stop: "bg-stop-soft", treated: "bg-treated-soft", control: "bg-control-soft" };
-  return <section className={`rounded-panel p-5 ${tone ? tones[tone] : "border border-line bg-card"} ${className}`}>{children}</section>;
+  return <section className={`rounded-panel p-5 shadow-[var(--shadow-soft)] ${tone ? tones[tone] : "bg-card"} ${className}`}>{children}</section>;
+}
+
+/** Round, soft icon button (header actions, scanner controls). */
+export function IconButton({ label, className = "", children, ...p }: ComponentProps<"button"> & { label: string }) {
+  return (
+    <button aria-label={label} className={`inline-flex h-11 w-11 items-center justify-center rounded-full bg-raised/90 text-ink shadow-[var(--shadow-soft)] hover:bg-white ${className}`} {...p}>
+      {children}
+    </button>
+  );
+}
+
+export function IconLink({ label, className = "", children, ...p }: ComponentProps<typeof Link> & { label: string }) {
+  return (
+    <Link aria-label={label} className={`inline-flex h-11 w-11 items-center justify-center rounded-full bg-raised/90 text-ink shadow-[var(--shadow-soft)] hover:bg-white ${className}`} {...p}>
+      {children}
+    </Link>
+  );
 }
 
 export function DemoBadge() {
   return (
-    <span className="inline-flex shrink-0 items-center whitespace-nowrap rounded-full border border-dashed border-muted px-2.5 py-0.5 text-xs font-medium text-muted" title="Seeded example data, not a real measurement">
+    <span className="inline-flex shrink-0 items-center whitespace-nowrap rounded-full border border-dashed border-muted/70 bg-raised/60 px-2.5 py-0.5 text-xs font-medium text-muted" title="Seeded example data, not a real measurement">
       Demo data
     </span>
   );
@@ -46,4 +63,4 @@ export function Field({ label, hint, children }: { label: string; hint?: string;
   );
 }
 
-export const inputClass = "w-full rounded-xl border border-line bg-card px-4 py-3 text-base outline-none focus:border-treated";
+export const inputClass = "w-full rounded-2xl border border-line/70 bg-raised px-4 py-3 text-base outline-none placeholder:text-muted/70 focus:border-forest";

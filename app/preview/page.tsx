@@ -32,7 +32,7 @@ export default function PreviewHub() {
   }, []);
   return (
     <AppShell>
-      <h1 className="mt-2 text-2xl font-bold tracking-tight">Preview before you buy</h1>
+      <h1 className="mt-2 text-[1.7rem] font-normal tracking-tight">Preview before you buy</h1>
       <p className="mt-1 text-muted">Try a product on half of you, keep the real you on the other half. Previews are simulations from YouCam AI, never measurements.</p>
       <ul className="mt-5 space-y-3">
         {TOOLS.map((t) => (

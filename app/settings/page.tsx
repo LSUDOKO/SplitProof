@@ -29,7 +29,7 @@ export default function Settings() {
 
   return (
     <AppShell>
-      <h1 className="mt-2 text-2xl font-bold tracking-tight">Settings</h1>
+      <h1 className="mt-2 text-[1.7rem] font-normal tracking-tight">Settings</h1>
       <Panel className="mt-5">
         <h2 className="font-semibold">Your data</h2>
         <p className="mt-1 text-sm text-muted">Photos, masks and results live only in this browser.</p>

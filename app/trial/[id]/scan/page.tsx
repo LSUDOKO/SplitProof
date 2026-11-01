@@ -3,6 +3,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { CheckIn } from "@/components/CheckIn";
+import { ScannerFrame } from "@/components/ScannerFrame";
 import { TrialState } from "@/components/TrialNotFound";
 import { Button, ButtonLink, Panel } from "@/components/ui";
 import { FACE_OVAL, POSE_MESSAGES, eulerFromMatrix, evaluatePose, framing, ghostDistance, type PoseIssue, type PoseReading } from "@/lib/capture/alignment";
@@ -23,6 +24,8 @@ type Phase = "starting" | "camera" | "analysing" | "checkin" | "practice_done" |
 type Check = { label: string; ok: boolean };
 
 const GHOST_TOLERANCE = 0.05;
+/** Earthy chip tints for passed checks, echoing the scanner's tag style. */
+const CHIP_TONES = ["bg-[#c9d8c0] text-forest-deep", "bg-[#e6d3b3] text-[#7a5418]", "bg-[#d9c4d6] text-[#6b3f66]", "bg-[#cfe0d6] text-[#2f5a45]", "bg-[#dcd6c2] text-[#5a5230]"];
 const LIVE_W = 360;
 
 export default function ScanPage() {
@@ -284,20 +287,16 @@ export default function ScanPage() {
         </Panel>
       ) : (
         <>
-          <div className="relative overflow-hidden rounded-panel bg-ink" style={{ aspectRatio: "3 / 4" }}>
+          <ScannerFrame status={hint} live>
             <video ref={videoRef} playsInline muted className="absolute inset-0 h-full w-full -scale-x-100 object-cover" aria-label="Camera preview (mirrored)" />
             <canvas ref={overlayRef} className="absolute inset-0 h-full w-full -scale-x-100 object-cover" aria-hidden="true" />
-            <svg viewBox="0 0 300 400" className="pointer-events-none absolute inset-0 h-full w-full" aria-hidden="true">
-              <ellipse cx="150" cy="190" rx="98" ry="132" fill="none" stroke="white" strokeOpacity="0.7" strokeWidth="2" strokeDasharray="6 6" />
-              <line x1="150" y1="40" x2="150" y2="340" stroke="white" strokeOpacity="0.35" strokeDasharray="4 6" />
+            <svg viewBox="0 0 300 400" className="pointer-events-none absolute inset-0 h-full w-full" preserveAspectRatio="none" aria-hidden="true">
+              <line x1="150" y1="30" x2="150" y2="370" stroke="white" strokeOpacity="0.45" strokeDasharray="4 6" />
             </svg>
-            <p className="absolute inset-x-3 bottom-3 rounded-xl bg-black/60 px-3 py-2 text-center text-sm font-medium text-white" role="status" aria-live="polite">
-              {hint}
-            </p>
-          </div>
-          <ul className="mt-3 flex flex-wrap gap-2" aria-label="Capture checks">
-            {checks.map((c) => (
-              <li key={c.label} className={`rounded-full px-3 py-1 text-sm font-medium ${c.ok ? "bg-good-soft text-good" : "border border-line text-muted"}`}>
+          </ScannerFrame>
+          <ul className="mt-5 flex flex-wrap justify-center gap-2" aria-label="Capture checks">
+            {checks.map((c, i) => (
+              <li key={c.label} className={`rounded-full px-3 py-1 text-sm ${c.ok ? CHIP_TONES[i % CHIP_TONES.length] : "bg-raised/70 text-muted"}`}>
                 {c.ok ? "✓ " : ""}
                 {c.label}
               </li>
@@ -326,7 +325,7 @@ function LightBar({ left, right }: { left: number; right: number }) {
         <div key={label as string} className="mt-1.5 grid grid-cols-[5.5rem_1fr] items-center gap-2 text-sm">
           <span className="text-muted">{label}</span>
           <span className="h-2 rounded-full bg-line">
-            <span className="block h-2 rounded-full bg-ink" style={{ width: `${((v as number) / max) * 100}%` }} />
+            <span className="block h-2 rounded-full bg-forest" style={{ width: `${((v as number) / max) * 100}%` }} />
           </span>
         </div>
       ))}

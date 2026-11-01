@@ -62,7 +62,7 @@ export default function HairTrialPage() {
 
   return (
     <AppShell back="/hair" title="SplitHair (beta)" action={trial.isDemo ? <DemoBadge /> : undefined}>
-      <h1 className="mt-2 text-2xl font-bold tracking-tight">{trial.product}</h1>
+      <h1 className="mt-2 text-[1.7rem] font-normal tracking-tight">{trial.product}</h1>
       <div className="mt-3 flex flex-wrap gap-2">
         <SideTag kind="treated">Product: your {trial.treatedSide.toUpperCase()} side</SideTag>
         <SideTag kind="control">Control: your {control} side</SideTag>
