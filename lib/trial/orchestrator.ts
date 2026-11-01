@@ -14,7 +14,7 @@ export type NewEvent = Pick<AgentEvent, "trialId" | "kind" | "text">;
 export function afterScan(trial: Trial, scans: Scan[], v: TrialVerdict, todayIso = new Date().toISOString()): { trial: Trial; events: NewEvent[] } {
   const ev = (kind: AgentEvent["kind"], text: string) => events.push({ trialId: trial.id, kind, text });
   const events: NewEvent[] = [];
-  let next: Trial = { ...trial };
+  const next: Trial = { ...trial };
   const latest = scans.at(-1);
   if (!latest) return { trial, events };
 

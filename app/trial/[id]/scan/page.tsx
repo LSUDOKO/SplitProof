@@ -128,8 +128,9 @@ export default function ScanPage() {
   }
 
   // Camera + live checks.
+  const live = phase === "starting" || phase === "camera";
   useEffect(() => {
-    if (!trial || (phase !== "starting" && phase !== "camera")) return;
+    if (!trial || !live) return;
     let stream: MediaStream | null = null;
     let raf = 0;
     let stop = false;
@@ -228,7 +229,7 @@ export default function ScanPage() {
       cancelAnimationFrame(raf);
       stream?.getTracks().forEach((t) => t.stop());
     };
-  }, [trial?.id, phase === "camera" || phase === "starting", capture]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [trial?.id, live, capture]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!data || !trial) return <TrialState loading={data === undefined} />;
 

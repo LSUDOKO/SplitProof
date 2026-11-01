@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @next/next/no-img-element -- local blob: URLs, nothing for next/image to optimise */
 import { useEffect, useMemo, useState } from "react";
 import { fitMidline } from "@/lib/split/midline";
 import type { ConcernKey, ScanMedia, Side } from "@/lib/types";

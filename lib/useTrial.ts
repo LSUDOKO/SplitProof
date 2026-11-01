@@ -11,36 +11,45 @@ export interface TrialData {
   verdict: TrialVerdict;
 }
 
-/** Loads one trial from IndexedDB and runs the deterministic engine over it. */
+async function loadTrial(id: string): Promise<TrialData | null> {
+  const trial = await trialsRepo.get(id);
+  if (!trial) return null;
+  const [scans, events] = await Promise.all([scansRepo.forTrial(id), eventsRepo.forTrial(id)]);
+  return { trial, scans, events, verdict: evaluateTrial(trial, scans) };
+}
+
+async function loadAll(): Promise<TrialData[]> {
+  const all = await trialsRepo.all();
+  return Promise.all(
+    all.map(async (trial) => {
+      const scans = await scansRepo.forTrial(trial.id);
+      return { trial, scans, events: [], verdict: evaluateTrial(trial, scans) };
+    }),
+  );
+}
+
+/** Loads one trial from IndexedDB and runs the deterministic engine over it. undefined = loading, null = not found. */
 export function useTrial(id: string) {
   const [data, setData] = useState<TrialData | null | undefined>(undefined);
-  const reload = useCallback(async () => {
-    const trial = await trialsRepo.get(id);
-    if (!trial) return setData(null);
-    const [scans, events] = await Promise.all([scansRepo.forTrial(id), eventsRepo.forTrial(id)]);
-    setData({ trial, scans, events, verdict: evaluateTrial(trial, scans) });
-  }, [id]);
   useEffect(() => {
-    reload();
-  }, [reload]);
+    let alive = true;
+    loadTrial(id).then((d) => alive && setData(d));
+    return () => {
+      alive = false;
+    };
+  }, [id]);
+  const reload = useCallback(() => loadTrial(id).then(setData), [id]);
   return { data, reload };
 }
 
 export function useAllTrials() {
   const [list, setList] = useState<TrialData[] | undefined>(undefined);
-  const reload = useCallback(async () => {
-    const all = await trialsRepo.all();
-    setList(
-      await Promise.all(
-        all.map(async (trial) => {
-          const scans = await scansRepo.forTrial(trial.id);
-          return { trial, scans, events: [], verdict: evaluateTrial(trial, scans) };
-        }),
-      ),
-    );
-  }, []);
   useEffect(() => {
-    reload();
-  }, [reload]);
-  return { list, reload };
+    let alive = true;
+    loadAll().then((d) => alive && setList(d));
+    return () => {
+      alive = false;
+    };
+  }, []);
+  return { list };
 }
