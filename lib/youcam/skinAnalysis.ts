@@ -2,7 +2,7 @@ import "server-only";
 import type { ConcernKey } from "../types";
 import { youcamJson } from "./client";
 import { YoucamError, extractErrorCode } from "./errors";
-import { FileRegistration, SimulationStatus, TaskCreated, TaskStatus, type OutputItemT } from "./schemas";
+import { FileRegistration, TaskCreated, TaskStatus, type OutputItemT } from "./schemas";
 
 export interface Upload {
   fileId: string;
@@ -54,16 +54,17 @@ export async function fetchMask(url: string): Promise<{ contentType: string; bas
   return { contentType: "image/png", base64: buf.toString("base64") };
 }
 
-/** AI Skin Simulation (Claim Check only — never fed to the verdict). */
-export async function createSimulation(fileId: string, params: Record<string, number>): Promise<string> {
-  const res = await youcamJson("/s2s/v2.0/task/skin-simulation", TaskCreated, { method: "POST", body: JSON.stringify({ src_file_id: fileId, ...params }) });
-  return res.data.task_id;
-}
 
-export async function getSimulation(taskId: string): Promise<{ status: "running" } | { status: "error"; code: string } | { status: "success"; url: string }> {
-  const res = await youcamJson(`/s2s/v2.0/task/skin-simulation/${encodeURIComponent(taskId)}`, SimulationStatus);
-  const { task_status, results } = res.data;
-  if (task_status === "success" && results?.url) return { status: "success", url: results.url };
-  if (task_status === "error" || task_status === "success") return { status: "error", code: extractErrorCode(res.data) };
-  return { status: "running" };
+const MAX_BYTES = 10 * 1024 * 1024;
+const IMAGE_TYPES = new Set(["image/jpeg", "image/png"]);
+
+/** Validate a form image at the trust boundary, register it and PUT the bytes. Returns the file id. */
+export async function uploadImage(image: FormDataEntryValue | null, prefix: string): Promise<string> {
+  if (!(image instanceof File)) throw new YoucamError("missing_image", 400);
+  if (!IMAGE_TYPES.has(image.type)) throw new YoucamError("bad_image_type", 400);
+  if (image.size > MAX_BYTES) throw new YoucamError("error_exceed_max_image_size", 400);
+  const bytes = await image.arrayBuffer();
+  const upload = await registerFile(`${prefix}_${Date.now()}.${image.type === "image/png" ? "png" : "jpg"}`, image.type, bytes.byteLength);
+  await uploadToPresigned(upload, bytes);
+  return upload.fileId;
 }

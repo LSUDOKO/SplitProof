@@ -54,12 +54,13 @@ export function ClaimCheck({ trial, scans, verdict }: { trial: Trial; scans: Sca
       if (!base) throw new Error("Your baseline photo isn't stored on this device.");
       const form = new FormData();
       form.set("image", base.image, "baseline.jpg");
+      form.set("kind", "skin-simulation");
       form.set("params", JSON.stringify(simulationParams(goals, strength)));
-      const created = await (await fetch("/api/simulate", { method: "POST", body: form })).json();
+      const created = await (await fetch("/api/preview", { method: "POST", body: form })).json();
       if (!created.taskId) throw new Error(created.message ?? "Simulation failed.");
       for (let i = 0; i < 45; i++) {
         await sleep(2000);
-        const r = await (await fetch(`/api/simulate/${encodeURIComponent(created.taskId)}`)).json();
+        const r = await (await fetch(`/api/preview/${encodeURIComponent(created.taskId)}?kind=skin-simulation`)).json();
         if (r.status === "success") {
           const blob = await dataUrlToBlob(r.image);
           await settings.set(key, blob);

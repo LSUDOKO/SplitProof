@@ -7,6 +7,11 @@ export const YOUCAM_ERROR_MESSAGES: Record<string, string> = {
   error_lighting_dark: "Too dark. Face a window or turn on a light in front of you.",
   InvalidAccessToken: "The analysis service rejected our credentials. Please try again later.",
   InvalidApiKey: "The analysis service rejected our credentials. Please try again later.",
+  error_face_angle: "Keep your head straight and look directly at the camera.",
+  error_no_face: "We couldn't find a face. Show your whole face, facing the camera.",
+  error_pose: "Look straight at the camera with your head level.",
+  error_nsfw_content_detected: "This photo can't be processed. Please use a plain selfie.",
+  error_invalid_params: "That option isn't supported. Please pick another.",
   rate_limited: "Too many scans in a short time. Wait a minute and try again.",
   timeout: "The analysis took too long. Please try again.",
 };
@@ -28,11 +33,12 @@ export class YoucamError extends Error {
 }
 
 export function friendlyMessage(code: string): string {
-  return YOUCAM_ERROR_MESSAGES[code] ?? GENERIC;
+  // Angle errors come in variants (error_face_angle_left_tilt, …_right_turn); one message covers them.
+  return YOUCAM_ERROR_MESSAGES[code] ?? (code.startsWith("error_face_angle") ? YOUCAM_ERROR_MESSAGES.error_face_angle : GENERIC);
 }
 
 /** Find a known error code anywhere in an error payload (shape varies by endpoint). */
 export function extractErrorCode(payload: unknown): string {
   const text = typeof payload === "string" ? payload : JSON.stringify(payload ?? "");
-  return Object.keys(YOUCAM_ERROR_MESSAGES).find((k) => text.includes(k)) ?? "unknown_error";
+  return text.match(/error_face_angle_[a-z_]+/)?.[0] ?? Object.keys(YOUCAM_ERROR_MESSAGES).find((k) => text.includes(k)) ?? "unknown_error";
 }

@@ -41,11 +41,27 @@ export const Credits = z.object({
   results: z.array(z.looseObject({ type: z.string().optional(), amount: z.number(), expiry: z.number().optional() })),
 });
 
-/** Skin Simulation poll (recorded: tests/fixtures/youcam/simulation). Result is one image URL. */
-export const SimulationStatus = z.object({
+/** Any single-image task poll (recorded: skin-simulation, makeup-vto, hair-color, bg-blur). */
+export const AnyTaskStatus = z.object({
   data: z.looseObject({
     task_status: z.string(),
-    results: z.looseObject({ url: z.string().optional() }).nullish(),
+    results: z.unknown().optional(),
     error: z.unknown().optional(),
+    error_message: z.unknown().optional(),
   }),
 });
+
+export const ImageResult = z.looseObject({ url: z.string() });
+
+/** Recorded: tests/fixtures/youcam/skin-tone. */
+export const SkinToneResult = z.looseObject({
+  color: z.looseObject({
+    skin_color: z.string(),
+    hair_color: z.string().optional(),
+    hair_color_name: z.string().optional(),
+    eye_color_name: z.string().optional(),
+  }),
+});
+
+/** Recorded: tests/fixtures/youcam/fitzpatrick. */
+export const FitzpatrickResult = z.looseObject({ fitzpatrick_scale: z.enum(["I", "II", "III", "IV", "V", "VI"]) });
