@@ -20,8 +20,9 @@ export interface PlanCheck {
   slack?: number;
 }
 
-export function checkPlan(goals: ConcernKey[], startIso: string, returnDeadline?: string): PlanCheck {
-  const plannedDays = plannedDaysFor(goals);
+/** `days` overrides the goal-based length (e.g. the 7-day makeup wear test). */
+export function checkPlan(goals: ConcernKey[], startIso: string, returnDeadline?: string, days?: number): PlanCheck {
+  const plannedDays = days ?? plannedDaysFor(goals);
   const endDate = addDays(startIso, plannedDays);
   if (!returnDeadline) return { plannedDays, endDate, fitsDeadline: true };
   const slack = daysUntil(returnDeadline, endDate);

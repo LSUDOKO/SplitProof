@@ -13,6 +13,9 @@ describe("trial planning", () => {
     expect(p.fitsDeadline).toBe(false);
     expect(checkPlan(["hd_moisture"], "2026-11-01T00:00:00Z", "2026-11-10T00:00:00Z").fitsDeadline).toBe(true);
   });
+  it("lets the makeup wear test fix the length at 7 days", () => {
+    expect(checkPlan(["hd_acne", "hd_oiliness"], "2026-11-01T00:00:00Z", "2026-11-10T00:00:00Z", 7)).toMatchObject({ plannedDays: 7, fitsDeadline: true });
+  });
   it("schedules scans every two days ending on the planned day", () => {
     expect(scanSchedule(7)).toEqual([2, 4, 6, 7]);
     expect(nextScanDay(7, [0, 0, 0, 2])).toBe(4);
