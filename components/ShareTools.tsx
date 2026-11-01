@@ -60,11 +60,11 @@ export function ShareTools({ trial, scans, verdict }: { trial: Trial; scans: Sca
 
   return (
     <Panel className="mt-3">
-      <h2 className="font-semibold">Share your result</h2>
-      <p className="mt-1 text-sm text-muted">Your eyes are always pixelated. Nothing is posted until you choose where to share.</p>
+      <h2 className="text-lg font-normal">Share your result</h2>
+      <p className="mt-1 text-sm text-ink/70">Your eyes are always pixelated. Nothing is posted until you choose where to share.</p>
       {hasPhotos && (
         <label className="mt-3 flex min-h-11 items-center gap-3 text-sm">
-          <input type="checkbox" className="h-5 w-5 accent-ink" checked={blur} onChange={(e) => setBlur(e.target.checked)} />
+          <input type="checkbox" className="h-5 w-5 shrink-0 accent-forest" checked={blur} onChange={(e) => setBlur(e.target.checked)} />
           Blur my room in the background (YouCam AI, on a copy of the photo)
         </label>
       )}
@@ -78,11 +78,11 @@ export function ShareTools({ trial, scans, verdict }: { trial: Trial; scans: Sca
           </Button>
         )}
       </div>
-      {busy && <p className="mt-2 text-sm text-muted" role="status">{busy}</p>}
+      {busy && <p className="mt-2 text-sm text-ink/70" role="status">{busy}</p>}
       {error && <p className="mt-2 text-sm text-stop" role="alert">{error}</p>}
       {preview && (
         // eslint-disable-next-line @next/next/no-img-element -- local blob URL
-        <img src={preview} alt="Your share card" className="mt-3 w-full rounded-xl border border-line" />
+        <img src={preview} alt="Your share card" className="mt-3 w-full rounded-2xl shadow-[var(--shadow-soft)]" />
       )}
     </Panel>
   );

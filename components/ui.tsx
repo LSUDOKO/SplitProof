@@ -48,11 +48,6 @@ export function DemoBadge() {
   );
 }
 
-export function SideTag({ kind, children }: { kind: "treated" | "control"; children: ReactNode }) {
-  const c = kind === "treated" ? "bg-treated-soft text-treated" : "bg-control-soft text-control";
-  return <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ${c}`}>{children}</span>;
-}
-
 export function Field({ label, hint, children }: { label: string; hint?: string; children: ReactNode }) {
   return (
     <label className="block">

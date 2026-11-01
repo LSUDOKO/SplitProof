@@ -11,6 +11,17 @@ function useObjectUrl(blob?: Blob) {
   return url;
 }
 
+/** Sits over the photo, so it keeps its own dark backing and white text in both themes. */
+function PhotoLabel({ treated, side, className }: { treated: boolean; side: Side; className: string }) {
+  return (
+    <span className={`absolute bottom-2 rounded-2xl bg-night/70 px-2.5 py-1 text-xs leading-tight text-white ${className}`}>
+      <span className={`mr-1.5 inline-block h-2 w-2 rounded-full ${treated ? "bg-treated" : "bg-control"}`} aria-hidden="true" />
+      {treated ? "Treated" : "Control"}
+      <span className="block">your {side}</span>
+    </span>
+  );
+}
+
 /**
  * A real scan photo, shown mirrored like a selfie, with the midline drawn and the chosen concern
  * mask overlaid. The treated half carries a light blue tint; the control half amber.
@@ -28,7 +39,7 @@ export function SplitPhoto({ media, treatedSide, width, height }: { media: ScanM
   const leftTreated = treatedSide === "left";
   return (
     <div>
-      <div className="relative overflow-hidden rounded-xl bg-ink" style={{ aspectRatio: `${width} / ${height}` }}>
+      <div className="relative overflow-hidden rounded-2xl bg-night" style={{ aspectRatio: `${width} / ${height}` }}>
         {img && <img src={img} alt="Your scan photo" className="absolute inset-0 h-full w-full -scale-x-100 object-cover" />}
         {mask && <img src={mask} alt="" className="absolute inset-0 h-full w-full -scale-x-100 object-cover" />}
         <svg viewBox={`0 0 ${width} ${height}`} className="absolute inset-0 h-full w-full" preserveAspectRatio="none" aria-hidden="true">
@@ -36,17 +47,13 @@ export function SplitPhoto({ media, treatedSide, width, height }: { media: ScanM
           <polygon points={`${top},0 ${width},0 ${width},${height} ${bottom},${height}`} fill={leftTreated ? "var(--color-control)" : "var(--color-treated)"} opacity="0.12" />
           <line x1={top} y1={0} x2={bottom} y2={height} stroke="white" strokeWidth={width / 300} strokeDasharray={`${width / 60} ${width / 80}`} />
         </svg>
-        <span className="absolute bottom-2 left-2 rounded-full bg-white/90 px-2 py-0.5 text-xs font-semibold" style={{ color: leftTreated ? "var(--color-treated)" : "var(--color-control)" }}>
-          {leftTreated ? "Treated" : "Control"} · your left
-        </span>
-        <span className="absolute bottom-2 right-2 rounded-full bg-white/90 px-2 py-0.5 text-xs font-semibold" style={{ color: leftTreated ? "var(--color-control)" : "var(--color-treated)" }}>
-          {leftTreated ? "Control" : "Treated"} · your right
-        </span>
+        <PhotoLabel treated={leftTreated} side="left" className="left-2" />
+        <PhotoLabel treated={!leftTreated} side="right" className="right-2" />
       </div>
       {keys.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-2" role="radiogroup" aria-label="Show detection mask">
           {keys.map((k) => (
-            <button key={k} role="radio" aria-checked={k === concern} onClick={() => setConcern(k)} className={`min-h-9 rounded-full px-3 text-sm font-medium ${k === concern ? "bg-ink text-white" : "border border-line"}`}>
+            <button key={k} type="button" role="radio" aria-checked={k === concern} onClick={() => setConcern(k)} className={`min-h-11 rounded-full px-4 text-sm transition-colors ${k === concern ? "bg-forest text-white" : "bg-raised text-ink shadow-[var(--shadow-soft)]"}`}>
               {CONCERN_LABELS[k]}
             </button>
           ))}

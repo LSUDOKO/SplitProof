@@ -58,5 +58,6 @@ describe("calendar export", () => {
     const ics = buildIcs([{ dateISO: "2026-11-03T08:00:00Z", title: "Scan" }, { dateISO: "2026-11-05T08:00:00Z", title: "Scan" }], new Date("2026-11-01T00:00:00Z"));
     expect(ics.match(/BEGIN:VEVENT/g)).toHaveLength(2);
     expect(ics).toContain("DTSTART:20261103T080000Z");
+    expect(buildIcs([{ dateISO: "2026-11-03T08:00:00Z", title: "Scan, day 2; left" }])).toContain("SUMMARY:Scan\\, day 2\\; left");
   });
 });

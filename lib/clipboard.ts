@@ -7,6 +7,8 @@ export async function copyText(text: string): Promise<boolean> {
   }
 }
 
+/** RFC 5545 TEXT escaping. */
+const escIcs = (t: string) => t.replace(/\\/g, "\\\\").replace(/[,;]/g, "\\$&").replace(/\n/g, "\\n");
 const fmtIcs = (d: Date) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
 
 /** RFC 5545 calendar text, one 15-minute event per entry. Pure, so it can be unit-tested. */
@@ -20,8 +22,8 @@ export function buildIcs(events: { dateISO: string; title: string; note?: string
       `DTSTAMP:${fmtIcs(stamp)}`,
       `DTSTART:${fmtIcs(start)}`,
       `DTEND:${fmtIcs(new Date(start.getTime() + 15 * 60_000))}`,
-      `SUMMARY:${e.title}`,
-      `DESCRIPTION:${(e.note ?? "").replace(/\n/g, "\\n")}`,
+      `SUMMARY:${escIcs(e.title)}`,
+      `DESCRIPTION:${escIcs(e.note ?? "")}`,
       "END:VEVENT",
     );
   });

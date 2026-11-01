@@ -88,7 +88,7 @@ export function BarcodeScanner({ onFound }: { onFound: (p: ProductLookup) => voi
         </Button>
       </div>
       {canDetect && (
-        <button className="mt-2 text-sm text-forest underline underline-offset-4" onClick={() => setOpen(!open)}>
+        <button className="mt-1 min-h-11 text-sm text-ink underline underline-offset-4" onClick={() => setOpen(!open)}>
           {open ? "Close camera" : "Scan with the camera"}
         </button>
       )}
