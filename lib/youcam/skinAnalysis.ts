@@ -50,5 +50,6 @@ export async function fetchMask(url: string): Promise<{ contentType: string; bas
   const res = await fetch(url, { signal: AbortSignal.timeout(20_000) });
   if (!res.ok) throw new YoucamError("mask_download_failed", 502);
   const buf = Buffer.from(await res.arrayBuffer());
-  return { contentType: res.headers.get("content-type") ?? "image/png", base64: buf.toString("base64") };
+  // Served as binary/octet-stream; the file is always PNG for HD masks.
+  return { contentType: "image/png", base64: buf.toString("base64") };
 }
