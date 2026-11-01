@@ -16,7 +16,7 @@ export async function POST(req: Request) {
   try {
     const fileId = await uploadImage((await req.formData()).get("image"), "profile");
     const [tone, fitz] = await Promise.all([
-      runToCompletion("skin-tone-analysis", fileId, { face_angle_strictness_level: "medium" }),
+      runToCompletion("skin-tone-analysis", fileId, { face_angle_strictness_level: "low" }),
       runToCompletion("fitzpatrick-scale-analyzer", fileId, { version: "1.0", index: 0 }),
     ]);
     const t = SkinToneResult.safeParse(tone);

@@ -1,11 +1,12 @@
 "use client";
-import { FlaskConical, Library, Settings, Users } from "lucide-react";
+import { FlaskConical, Library, Settings, Sparkles, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 
 const NAV = [
   { href: "/trials", label: "Trials", icon: FlaskConical },
+  { href: "/preview", label: "Preview", icon: Sparkles },
   { href: "/passport", label: "Passport", icon: Library },
   { href: "/evidence", label: "Evidence", icon: Users },
   { href: "/settings", label: "Settings", icon: Settings },
@@ -42,7 +43,7 @@ export function AppShell({ children, title, back, action }: { children: ReactNod
       </header>
       <main className="flex-1 px-4 pb-28 pt-2">{children}</main>
       <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-line bg-card/95 pb-[env(safe-area-inset-bottom)] backdrop-blur" aria-label="Main">
-        <ul className="mx-auto grid max-w-md grid-cols-4">
+        <ul className="mx-auto grid max-w-md grid-cols-5">
           {NAV.map(({ href, label, icon: Icon }) => {
             const active = path.startsWith(href) || (href === "/trials" && path.startsWith("/trial/"));
             return (

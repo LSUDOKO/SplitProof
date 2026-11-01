@@ -128,3 +128,13 @@ export interface AgentEvent {
   kind: "trial_created" | "scan_done" | "sentinel_watch" | "sentinel_stop" | "early_stop" | "extended" | "deadline_warning" | "verdict" | "missed_scan";
   text: string;
 }
+
+export interface PreviewRecord {
+  id: string;
+  kind: "shade" | "hair" | "earrings";
+  createdAt: string;
+  title: string;
+  /** The split composite (simulated half | real half), JPEG. */
+  image: Blob;
+  note?: string;
+}

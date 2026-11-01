@@ -1,5 +1,5 @@
 import { openDB, type DBSchema, type IDBPDatabase } from "idb";
-import type { AgentEvent, Scan, ScanMedia, Trial } from "../types";
+import type { AgentEvent, PreviewRecord, Scan, ScanMedia, Trial } from "../types";
 
 interface SplitSideDB extends DBSchema {
   trials: { key: string; value: Trial };
@@ -7,18 +7,22 @@ interface SplitSideDB extends DBSchema {
   media: { key: string; value: ScanMedia };
   events: { key: string; value: AgentEvent; indexes: { byTrial: string } };
   settings: { key: string; value: unknown };
+  previews: { key: string; value: PreviewRecord };
 }
 
 let dbp: Promise<IDBPDatabase<SplitSideDB>> | null = null;
 
 function db() {
-  dbp ??= openDB<SplitSideDB>("splitside", 1, {
-    upgrade(d) {
-      d.createObjectStore("trials", { keyPath: "id" });
-      d.createObjectStore("scans", { keyPath: "id" }).createIndex("byTrial", "trialId");
-      d.createObjectStore("media", { keyPath: "scanId" });
-      d.createObjectStore("events", { keyPath: "id" }).createIndex("byTrial", "trialId");
-      d.createObjectStore("settings");
+  dbp ??= openDB<SplitSideDB>("splitside", 2, {
+    upgrade(d, oldVersion) {
+      if (oldVersion < 1) {
+        d.createObjectStore("trials", { keyPath: "id" });
+        d.createObjectStore("scans", { keyPath: "id" }).createIndex("byTrial", "trialId");
+        d.createObjectStore("media", { keyPath: "scanId" });
+        d.createObjectStore("events", { keyPath: "id" }).createIndex("byTrial", "trialId");
+        d.createObjectStore("settings");
+      }
+      if (oldVersion < 2) d.createObjectStore("previews", { keyPath: "id" });
     },
   });
   return dbp;
@@ -65,6 +69,12 @@ export const events = {
 export const settings = {
   get: async <T,>(key: string) => (await (await db()).get("settings", key)) as T | undefined,
   set: async (key: string, value: unknown) => (await db()).put("settings", value, key),
+};
+
+export const previews = {
+  all: async () => (await (await db()).getAll("previews")).sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
+  put: async (p: PreviewRecord) => (await db()).put("previews", p),
+  remove: async (id: string) => (await db()).delete("previews", id),
 };
 
 /** "Delete everything" (I4): wipes the database and any cached files. */
