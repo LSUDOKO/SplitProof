@@ -67,7 +67,7 @@ function EmptyState() {
       <p className="mt-3 text-lg">No trials yet.</p>
       <p className="mt-1 text-ink/70">Start one with a product you just bought, or explore the demo first.</p>
       <div className="mt-5 flex w-full flex-col gap-3">
-        <ButtonLink href="/consent">Start a trial</ButtonLink>
+        <ButtonLink href="/trial/new">Start a trial</ButtonLink>
         <ButtonLink href="/demo" variant="secondary">Explore a demo trial</ButtonLink>
       </div>
     </div>

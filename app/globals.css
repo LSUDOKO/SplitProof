@@ -71,7 +71,6 @@ body {
 :focus-visible {
   outline: 3px solid var(--color-forest);
   outline-offset: 2px;
-  border-radius: 6px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -79,6 +78,7 @@ body {
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }

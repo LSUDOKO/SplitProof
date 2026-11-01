@@ -68,7 +68,7 @@ export default function ScanHub() {
             </Reveal>
           )}
           <div className="mt-4 flex flex-col gap-3">
-            {!real.length && <ButtonLink href="/consent">Start a trial</ButtonLink>}
+            {!real.length && <ButtonLink href="/trial/new">Start a trial</ButtonLink>}
             {demo && (
               <ButtonLink href={`/trial/${demo.trial.id}/scan`} variant="secondary">
                 Practise the scanner (nothing is uploaded)

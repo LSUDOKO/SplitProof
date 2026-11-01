@@ -313,7 +313,7 @@ export default function ScanPage() {
         <Panel className="mt-2" tone="good">
           <p className="font-semibold">All checks passed.</p>
           <p className="mt-1">In a real trial this frame would now go to YouCam AI Skin Analysis and both halves would be measured.</p>
-          <ButtonLink href="/consent" className="mt-4 w-full">Start a real trial</ButtonLink>
+          <ButtonLink href="/trial/new" className="mt-4 w-full">Start a real trial</ButtonLink>
         </Panel>
       ) : (
         <>
