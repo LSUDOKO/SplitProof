@@ -48,7 +48,9 @@ export default function Chat() {
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const end = useRef<HTMLDivElement>(null);
-  useEffect(() => end.current?.scrollIntoView({ behavior: "smooth" }), [msgs.length, busy]);
+  useEffect(() => {
+    end.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [msgs.length, busy]);
   if (!data) return <TrialState loading={data === undefined} />;
   const { trial: t, scans, verdict } = data;
   const history = (list ?? []).map((d) => ({ trial: d.trial, verdict: evaluateTrial(d.trial, d.scans).verdict }));

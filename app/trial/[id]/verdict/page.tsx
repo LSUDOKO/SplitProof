@@ -8,7 +8,6 @@ import { SplitFace } from "@/components/SplitFace";
 import { ScanCompare } from "@/components/ScanCompare";
 import { TrialState } from "@/components/TrialNotFound";
 import { Button, ButtonLink, DemoBadge, Panel } from "@/components/ui";
-import { VerdictBadge } from "@/components/VerdictBadge";
 import { draftMessage } from "@/lib/agent/drafts";
 import { buildSummary } from "@/lib/agent/summary";
 import { trials } from "@/lib/db";
@@ -40,13 +39,12 @@ export default function VerdictPage() {
   return (
     <AppShell back={`/trial/${t.id}`} title="Verdict" action={t.isDemo ? <DemoBadge /> : undefined}>
       <Panel className="mt-2" tone={bad ? "stop" : v.verdict === "working" ? "good" : undefined}>
-        <VerdictBadge verdict={v.verdict} />
-        <h1 className="mt-3 text-2xl font-bold leading-tight tracking-tight">
+        <h1 className="text-2xl font-bold leading-tight tracking-tight">
           {h2h && v.verdict === "no_difference"
             ? `${t.products.B?.name}${t.products.B?.price ? ` (₹${t.products.B.price})` : ""} did no better than ${t.products.A.name}${t.products.A.price ? ` (₹${t.products.A.price})` : ""}`
             : VERDICT_TITLES[v.verdict]}
         </h1>
-        <p className="mt-3">{explainVerdict(t, v)}</p>
+        <p className="mt-3">{explainVerdict(t, v, false)}</p>
         {!bad && v.verdict !== "insufficient_data" && <p className="mt-2 text-sm text-muted">Confidence: {v.confidence}</p>}
       </Panel>
 
@@ -102,7 +100,11 @@ export default function VerdictPage() {
       </Panel>
 
       <div className="mt-4 flex flex-col gap-3">
-        {t.returnDeadline && <DeadlineChip deadline={t.returnDeadline} />}
+        {t.returnDeadline && (
+          <div>
+            <DeadlineChip deadline={t.returnDeadline} />
+          </div>
+        )}
         {v.verdict === "working" && t.status !== "finished" && (
           <Button onClick={() => finish("finished")}>Keep it and close the trial</Button>
         )}

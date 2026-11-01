@@ -1,3 +1,4 @@
+import { STOP_ADVICE } from "../stats/sentinel";
 import { SYSTEM_PROMPT } from "./prompt";
 import type { AgentSummary } from "./summary";
 import { TOOL_DEFS, runTool, type AgentAction } from "./tools";
@@ -20,7 +21,7 @@ export async function runAgent(complete: Complete, summary: AgentSummary, histor
   const toolsUsed: string[] = [];
   for (let step = 0; step < MAX_STEPS; step++) {
     const reply = await complete(messages, TOOL_DEFS);
-    if (!reply.tool_calls?.length) return { text: reply.content?.trim() || "", actions, toolsUsed };
+    if (!reply.tool_calls?.length) return { text: withSafety(reply.content?.trim() || "", summary, history.at(-1)?.content ?? ""), actions, toolsUsed };
     messages.push({ role: "assistant", content: reply.content ?? null, tool_calls: reply.tool_calls });
     for (const call of reply.tool_calls) {
       toolsUsed.push(call.function.name);
@@ -45,4 +46,13 @@ export function groqComplete(apiKey: string, model: string): Complete {
     const m = data.choices[0].message;
     return { role: "assistant", content: m.content ?? null, tool_calls: m.tool_calls };
   };
+}
+
+const SYMPTOMS = /burn|sting|itch|swell|rash|pain|जलन|खुजली/i;
+
+/** Safety rule is non-negotiable: a STOP verdict or reported symptoms always carry the full advice. */
+export function withSafety(text: string, summary: AgentSummary, lastUser: string): string {
+  if (!text) return text;
+  const needs = summary.verdict.verdict === "stop" || SYMPTOMS.test(lastUser);
+  return needs && !/doctor/i.test(text) ? `${text}\n\n${STOP_ADVICE}` : text;
 }

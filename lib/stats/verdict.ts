@@ -31,6 +31,13 @@ export interface TrialVerdict {
   reasons: string[];
 }
 
+const SENTINEL_REASONS = {
+  redness_spike: "Redness on the treated side jumped past your noise range",
+  redness_sustained: "Redness on the treated side stayed high on two scans in a row",
+  acne_sustained: "Breakouts on the treated side stayed high on two scans in a row",
+  symptoms: "You reported burning, stinging, itching or swelling",
+} as const;
+
 export function confidenceOf(m: number, sd: number, n: number): Confidence {
   if (n === 0) return "Low";
   const z = Math.abs(m) / ((sd * Math.SQRT2) / Math.sqrt(n));
@@ -70,7 +77,7 @@ export function evaluateTrial(trial: Trial, scans: Scan[], todayIso = new Date()
   let lead: ConcernVerdict | undefined;
   if (sentinel.level === "stop") {
     verdict = "stop";
-    reasons.push(`Irritation sentinel: ${sentinel.reason}`);
+    reasons.push(SENTINEL_REASONS[sentinel.reason ?? "redness_spike"]);
   } else if ((lead = pick("worse"))) verdict = "worse";
   else if ((lead = pick("working"))) verdict = "working";
   else if (concerns.length && concerns.every((c) => c.verdict === "no_difference")) {

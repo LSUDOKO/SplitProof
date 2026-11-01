@@ -43,3 +43,13 @@ describe("agent loop", () => {
     expect(seenTools.find((m) => m.tool_call_id === "b")!.content).toContain("No measurements");
   });
 });
+
+describe("safety guard", () => {
+  it("appends stop advice when the model leaves out the doctor prompt", async () => {
+    const { withSafety } = await import("@/lib/agent/loop");
+    const stopSummary = { ...summary, verdict: { ...summary.verdict, verdict: "stop" } };
+    expect(withSafety("Please stop using it.", stopSummary, "is it ok?")).toContain("See a doctor");
+    expect(withSafety("All good so far.", summary, "it stings a bit")).toContain("See a doctor");
+    expect(withSafety("All good so far.", summary, "is it working?")).toBe("All good so far.");
+  });
+});

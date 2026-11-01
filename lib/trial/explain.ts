@@ -16,7 +16,7 @@ export const VERDICT_TITLES: Record<Verdict, string> = {
 };
 
 /** Plain-language verdict sentence built only from engine numbers. Used by UI and as the LLM fallback. */
-export function explainVerdict(trial: Trial, v: TrialVerdict): string {
+export function explainVerdict(trial: Trial, v: TrialVerdict, withAdvice = true): string {
   const lead = v.concerns.find((c) => c.verdict === v.verdict) ?? v.concerns[0];
   const label = lead ? CONCERN_LABELS[lead.concern].toLowerCase() : "skin";
   const treated = `treated (${sideWord(trial.treatedSide)}) cheek`;
@@ -26,9 +26,11 @@ export function explainVerdict(trial: Trial, v: TrialVerdict): string {
   const b = trial.products.B?.name ?? "B";
   switch (v.verdict) {
     case "stop":
-      return v.sentinel.reason === "symptoms"
-        ? `You reported burning, stinging, itching or swelling. ${STOP_ADVICE}`
-        : `Redness or breakouts on your ${treated} rose well above your normal range while the control side didn't. ${STOP_ADVICE}`;
+      return `${
+        v.sentinel.reason === "symptoms"
+          ? "You reported burning, stinging, itching or swelling on the treated side."
+          : `${v.sentinel.reason === "acne_sustained" ? "Breakouts" : "Redness"} on your ${treated} rose above your normal range while the control side didn't.`
+      }${withAdvice ? ` ${STOP_ADVICE}` : ""}`;
     case "working":
       return h2h
         ? `${a} beat ${b}: about ${Math.abs(lead.effectPct)}% less ${label}-detected area on the ${a} side than expected. Confidence: ${v.confidence}.`
