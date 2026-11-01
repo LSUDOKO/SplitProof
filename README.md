@@ -100,7 +100,7 @@ Requirements: Node 22+, npm.
 git clone https://github.com/LSUDOKO/SplitProof.git
 cd SplitProof
 npm install
-cp .env.example .env.local   # then fill in the keys
+cp .env.example .env         # then fill in the keys
 npm run dev                  # http://localhost:3000
 ```
 
@@ -117,7 +117,7 @@ The camera needs HTTPS on phones. Use a Vercel preview, or `npx next dev --exper
 npm test            # unit tests (no network, no units spent)
 npm run lint
 npm run build
-node --env-file=.env.local scripts/record-fixture.mjs photo.jpg   # record a new YouCam fixture (~16 units)
+node --env-file=.env scripts/record-fixture.mjs photo.jpg   # record a new YouCam fixture (~16 units)
 ```
 
 In development, `/dev/youcam` runs one photo through the full pipeline and shows the ROI overlay.

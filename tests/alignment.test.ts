@@ -38,6 +38,8 @@ describe("ghost outline", () => {
     const b = syntheticLandmarks({ cx: 560, cy: 740, w: 770, h: 990 });
     const c = syntheticLandmarks({ cx: 500, cy: 700, w: 700, h: 1200 });
     expect(ghostDistance(a, b, idx)).toBeLessThan(0.001);
+    const rolled = syntheticLandmarks({ cx: 500, cy: 700, w: 700, h: 900, rollDeg: 5 });
+    expect(ghostDistance(a, rolled, idx)).toBeLessThan(0.001);
     expect(ghostDistance(a, c, idx)).toBeGreaterThan(0.04);
     expect(FACE_OVAL).toContain(454);
   });

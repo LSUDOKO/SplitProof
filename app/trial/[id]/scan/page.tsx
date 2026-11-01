@@ -7,7 +7,7 @@ import { TrialState } from "@/components/TrialNotFound";
 import { Button, ButtonLink, Panel } from "@/components/ui";
 import { FACE_OVAL, POSE_MESSAGES, eulerFromMatrix, evaluatePose, framing, ghostDistance, type PoseIssue, type PoseReading } from "@/lib/capture/alignment";
 import { analyseOnYoucam, measureBurdens } from "@/lib/capture/analyse";
-import { grabFrame, toJpeg } from "@/lib/capture/frame";
+import { grabFrame, portraitCrop, toJpeg } from "@/lib/capture/frame";
 import { blendshape, getLandmarker, toPixels } from "@/lib/capture/landmarks";
 import { LIGHT_MESSAGES, evaluateLight, readLight, type LightIssue } from "@/lib/capture/lightGate";
 import { BASELINE_SCANS, POSE_GATE } from "@/lib/config";
@@ -22,7 +22,7 @@ import { useTrial } from "@/lib/useTrial";
 type Phase = "starting" | "camera" | "analysing" | "checkin" | "practice_done" | "error";
 type Check = { label: string; ok: boolean };
 
-const GHOST_TOLERANCE = 0.04;
+const GHOST_TOLERANCE = 0.05;
 const LIVE_W = 360;
 
 export default function ScanPage() {
@@ -163,11 +163,13 @@ export default function ScanPage() {
         if (stop) return;
         raf = requestAnimationFrame(tick);
         if (video.readyState < 2 || capturing.current) return;
-        const W = video.videoWidth;
-        const H = video.videoHeight;
+        // All live geometry is in the 3:4 portrait crop, the same frame that gets captured.
+        const crop = portraitCrop(video.videoWidth, video.videoHeight);
+        const W = crop.width;
+        const H = crop.height;
         const now = performance.now();
         const r = lm.detectForVideo(video, now);
-        const pts = toPixels(r, W, H);
+        const pts = toPixels(r, video.videoWidth, video.videoHeight)?.map(([x, y]) => [x - crop.x, y - crop.y] as [number, number]) ?? null;
         let pose: PoseReading | null = null;
         if (pts && r.facialTransformationMatrixes?.[0]) {
           const f = framing(pts, W, H);
@@ -189,7 +191,7 @@ export default function ScanPage() {
           small.width = LIVE_W;
           small.height = Math.round(H * s);
           const ctx = small.getContext("2d", { willReadFrequently: true })!;
-          ctx.drawImage(video, 0, 0, small.width, small.height);
+          ctx.drawImage(video, crop.x, crop.y, W, H, 0, 0, small.width, small.height);
           try {
             const spts = pts.map(([x, y]) => [x * s, y * s] as [number, number]);
             const roi = buildRoiIndex(small.width, small.height, faceGeometry(spts, "cheeks"));

@@ -32,6 +32,7 @@ export default function NewTrial() {
   const [priceA, setPriceA] = useState("");
   const [priceB, setPriceB] = useState("");
   const [inci, setInci] = useState("");
+  const [fitz, setFitz] = useState("");
   const [goals, setGoals] = useState<string[]>([]);
   const [deadline, setDeadline] = useState("");
   const [noReturn, setNoReturn] = useState(false);
@@ -77,6 +78,7 @@ export default function NewTrial() {
       startDate: today,
       plannedDays: plan.plannedDays,
       returnDeadline: deadline && !noReturn ? new Date(deadline).toISOString() : undefined,
+      fitzpatrick: fitz ? (Number(fitz) as Trial["fitzpatrick"]) : undefined,
       status: "baseline",
       isDemo: false,
       createdAt: today,
@@ -125,6 +127,17 @@ export default function NewTrial() {
           )}
           <Field label={mode === "single" ? "Ingredients (optional)" : "Ingredients of A (optional)"} hint="Paste the list from the box. It powers safety checks and your Skin Passport.">
             <textarea className={`${inputClass} min-h-24`} value={inci} onChange={(e) => setInci(e.target.value)} placeholder="Aqua, Niacinamide, Glycerin…" />
+          </Field>
+          <Field label="Your skin's reaction to sun (optional)" hint="Darker skin can keep dark marks after irritation, so SplitSide warns earlier with strong actives.">
+            <select className={inputClass} value={fitz} onChange={(e) => setFitz(e.target.value)}>
+              <option value="">Prefer not to say</option>
+              <option value="1">Always burns, never tans (type I)</option>
+              <option value="2">Usually burns, tans a little (type II)</option>
+              <option value="3">Sometimes burns, tans evenly (type III)</option>
+              <option value="4">Rarely burns, tans easily (type IV)</option>
+              <option value="5">Very rarely burns, brown skin (type V)</option>
+              <option value="6">Never burns, deeply pigmented skin (type VI)</option>
+            </select>
           </Field>
           {classes.length > 0 && (
             <Panel tone="control">

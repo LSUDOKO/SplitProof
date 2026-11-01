@@ -38,7 +38,7 @@ export function groqComplete(apiKey: string, model: string): Complete {
     const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ model, messages, tools, tool_choice: "auto", temperature: 0.2, max_completion_tokens: 700 }),
+      body: JSON.stringify({ model, messages, tools, tool_choice: "auto", temperature: 0.2, max_completion_tokens: 1500, reasoning_effort: "low" }),
       signal: AbortSignal.timeout(30_000),
     });
     if (!res.ok) throw new Error(`Groq ${res.status}`);

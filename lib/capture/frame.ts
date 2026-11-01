@@ -10,15 +10,30 @@ export function targetSize(w: number, h: number) {
   return { width: Math.round(w * scale), height: Math.round(h * scale), scale };
 }
 
-/** Un-mirrored frame grab at analysis size. Never enhanced or filtered (A7). */
+/**
+ * Centre 3:4 portrait crop of the camera frame. Landscape webcams (16:9) would otherwise
+ * never let a face reach 60–80% of the frame width; the preview shows exactly this crop.
+ */
+export function portraitCrop(vw: number, vh: number) {
+  const target = 3 / 4;
+  if (vw / vh > target) {
+    const w = Math.round(vh * target);
+    return { x: Math.round((vw - w) / 2), y: 0, width: w, height: vh };
+  }
+  const h = Math.min(vh, Math.round(vw / target));
+  return { x: 0, y: Math.round((vh - h) / 2), width: vw, height: h };
+}
+
+/** Un-mirrored frame grab of the portrait crop at analysis size. Never enhanced or filtered (A7). */
 export function grabFrame(video: HTMLVideoElement) {
-  const { width, height, scale } = targetSize(video.videoWidth, video.videoHeight);
+  const crop = portraitCrop(video.videoWidth, video.videoHeight);
+  const { width, height, scale } = targetSize(crop.width, crop.height);
   const canvas = document.createElement("canvas");
   canvas.width = width;
   canvas.height = height;
   const ctx = canvas.getContext("2d", { willReadFrequently: true })!;
   ctx.imageSmoothingQuality = "high";
-  ctx.drawImage(video, 0, 0, width, height);
+  ctx.drawImage(video, crop.x, crop.y, crop.width, crop.height, 0, 0, width, height);
   return { canvas, ctx, width, height, scale };
 }
 

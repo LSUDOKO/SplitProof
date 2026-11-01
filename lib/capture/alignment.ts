@@ -67,8 +67,8 @@ export function evaluatePose(p: PoseReading | null): PoseIssue[] {
 }
 
 /**
- * Mean distance between the live face and the baseline face after removing translation and scale
- * (centroid + face width), as a fraction of face width. Rotation is already gated by the pose check.
+ * Mean distance between the live face and the baseline face after a similarity transform
+ * (translation, scale and rotation removed, 2-D Procrustes), as a fraction of face width.
  */
 export function ghostDistance(live: Landmarks, baseline: Landmarks, indices: number[]): number {
   const norm = (lm: Landmarks) => {
@@ -80,7 +80,17 @@ export function ghostDistance(live: Landmarks, baseline: Landmarks, indices: num
   };
   const a = norm(live);
   const b = norm(baseline);
-  return a.reduce((s, p, k) => s + Math.hypot(p[0] - b[k][0], p[1] - b[k][1]), 0) / a.length;
+  // Optimal rotation of a onto b.
+  let sin = 0;
+  let cos = 0;
+  a.forEach(([ax, ay], k) => {
+    const [bx, by] = b[k];
+    cos += ax * bx + ay * by;
+    sin += ax * by - ay * bx;
+  });
+  const t = Math.atan2(sin, cos);
+  const [c, s] = [Math.cos(t), Math.sin(t)];
+  return a.reduce((sum, [ax, ay], k) => sum + Math.hypot(ax * c - ay * s - b[k][0], ax * s + ay * c - b[k][1]), 0) / a.length;
 }
 
 /** MediaPipe face-oval landmark indices, in drawing order. */
