@@ -1,4 +1,5 @@
 import { openDB, type DBSchema, type IDBPDatabase } from "idb";
+import type { HairTrial } from "../hair/model";
 import type { AgentEvent, PreviewRecord, Scan, ScanMedia, Trial } from "../types";
 
 interface SplitSideDB extends DBSchema {
@@ -8,12 +9,13 @@ interface SplitSideDB extends DBSchema {
   events: { key: string; value: AgentEvent; indexes: { byTrial: string } };
   settings: { key: string; value: unknown };
   previews: { key: string; value: PreviewRecord };
+  hairTrials: { key: string; value: HairTrial };
 }
 
 let dbp: Promise<IDBPDatabase<SplitSideDB>> | null = null;
 
 function db() {
-  dbp ??= openDB<SplitSideDB>("splitside", 2, {
+  dbp ??= openDB<SplitSideDB>("splitside", 3, {
     upgrade(d, oldVersion) {
       if (oldVersion < 1) {
         d.createObjectStore("trials", { keyPath: "id" });
@@ -23,6 +25,7 @@ function db() {
         d.createObjectStore("settings");
       }
       if (oldVersion < 2) d.createObjectStore("previews", { keyPath: "id" });
+      if (oldVersion < 3) d.createObjectStore("hairTrials", { keyPath: "id" });
     },
   });
   return dbp;
@@ -75,6 +78,12 @@ export const previews = {
   all: async () => (await (await db()).getAll("previews")).sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
   put: async (p: PreviewRecord) => (await db()).put("previews", p),
   remove: async (id: string) => (await db()).delete("previews", id),
+};
+
+export const hairTrials = {
+  all: async () => (await (await db()).getAll("hairTrials")).sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
+  get: async (id: string) => (await db()).get("hairTrials", id),
+  put: async (t: HairTrial) => (await db()).put("hairTrials", t),
 };
 
 /** "Delete everything" (I4): wipes the database and any cached files. */

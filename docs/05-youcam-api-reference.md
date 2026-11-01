@@ -162,7 +162,7 @@ All use `POST /s2s/v2.0/file` + presigned PUT, then `POST /s2s/v2.0/task/<kind>`
 | `skin-simulation` | concern intensities 0–1 | url | Claim Check |
 | `2d-vto/earring` | `ref_file_ids:[gold, silver]`, `source_info:{name: src}`, `object_infos:[{name: ref, parameter:{earring_is_right_ear, earring_need_remove_background, earring_scale (cm), earring_anchor_point}}]` | url | Gold vs silver (1 unit single, 2 stacked). Needs real product photos with a transparent background (`earring_need_remove_background:false`, no `earring_scale`): drawn icons rendered as a few pixels. **`earring_is_right_ear` refers to the IMAGE's right**, i.e. the user's left ear in an un-mirrored selfie |
 
-Not used: `hair-frizziness-detection` takes exactly 3 views (`src_file_ids` front/left/right) and returns one combined `hair_frizziness`, so there is no per-side value for a split trial (docs/14 H3 dropped).
+`hair-frizziness-detection` (2 units): `{src_file_ids:[front, left, right]}`, all three the **same width and height** (`error_mismatch_image_size` otherwise); front within 10°, sides turned more than 15° (`error_face_angle_invalid`, recorded in `frizz-error/`). It returns ONE combined `hair_frizziness:{mapping 0–3, term}`. SplitHair (beta) gets a level per side by running it twice: `[front, treatedSide, treatedSide]` and `[front, controlSide, controlSide]` (4 units per check-in). A successful response is not recorded yet: the public-domain test photos we found fail the angle check, so this path is validated on a real phone.
 
 ## Concern names
 

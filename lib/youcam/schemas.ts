@@ -65,3 +65,8 @@ export const SkinToneResult = z.looseObject({
 
 /** Recorded: tests/fixtures/youcam/fitzpatrick. */
 export const FitzpatrickResult = z.looseObject({ fitzpatrick_scale: z.enum(["I", "II", "III", "IV", "V", "VI"]) });
+
+/** Hair frizziness (spec: results.hair_frizziness.{mapping 0–3, term}). One combined level per call. */
+export const FrizzResult = z.looseObject({
+  hair_frizziness: z.looseObject({ mapping: z.number().int().min(0).max(3), term: z.string().optional() }),
+});

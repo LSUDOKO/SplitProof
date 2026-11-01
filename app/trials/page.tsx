@@ -11,6 +11,12 @@ export default function Trials() {
   return (
     <AppShell action={<Link href="/trial/new" className="text-sm font-semibold text-treated">New trial</Link>}>
       <h1 className="mt-2 text-2xl font-bold tracking-tight">Your trials</h1>
+      <Link href="/hair" className="mt-3 flex items-center justify-between rounded-panel border border-line bg-card px-4 py-3 text-sm hover:border-ink/30">
+        <span>
+          <span className="font-semibold">SplitHair</span> · test an anti-frizz product on one side of your head
+        </span>
+        <span className="rounded-full border border-line px-2 py-0.5 text-xs font-medium text-muted">Beta</span>
+      </Link>
       {list === undefined ? (
         <p className="mt-6 text-muted" role="status">Loading…</p>
       ) : list.length === 0 ? (

@@ -29,6 +29,8 @@ People buy skincare without knowing whether it works. Before-and-after selfies c
 - **Preview mode ("split everything").** Before you buy, the product goes on half of you and the real you stays on the other half, in one photo, always labelled *Preview: simulated*:
   - **Half-face foundation swatch.** YouCam makeup try-on renders one or two shades. A seam score (CIEDE2000 between your bare cheeks and the same cheeks with the shade) says "Blends well", "Slightly light" or "Too dark", so you buy one shade instead of two. The shortlist comes from your skin tone measured by YouCam skin tone analysis.
   - **Half-head hair colour.** A new colour on one side of your head, your current colour on the other, with three suggestions that explain why they suit your undertone.
+  - **Gold or silver?** One gold hoop on one ear and one silver hoop on the other, in the same photo, with an undertone hint. The hoop photos are a CC0 museum object (The Met); the silver one is the same hoop recoloured so only the metal differs.
+- **SplitHair (beta).** An anti-frizz product on one side of the parting. Each check-in rates frizz per side with YouCam hair frizziness detection (front + that side's view), and an ordinal difference-in-differences counts only full-level changes that repeat. Confidence stays low by design.
 - **Measured skin type.** YouCam's Fitzpatrick analyser reads your phototype from one photo. Darker phototypes get an earlier irritation alert with strong actives, because they are more prone to dark marks after irritation.
 - **Makeup wear test.** Foundation on one half for a week, measuring breakouts, redness and oiliness against the bare half. It answers "does this foundation break me out?" with the same engine.
 - **Share card and story reel.** A PNG result card and a 7-second reel (day 0 → last day → verdict) built from your real photos. Eyes are always pixelated, and YouCam background blur hides your room on a copy of the photo.
@@ -49,6 +51,8 @@ People buy skincare without knowing whether it works. Before-and-after selfies c
 | **Hair Color VTO** | `POST /s2s/v2.0/task/hair-color` | Half-head hair colour preview |
 | **Skin Tone Analysis** | `POST /s2s/v2.0/task/skin-tone-analysis` | Measured skin colour, undertone and hair colour, which drive the shade and hair shortlists |
 | **Fitzpatrick Skin Type** | `POST /s2s/v2.0/task/fitzpatrick-scale-analyzer` | Phototype I–VI from a photo, which tunes the irritation-sentinel threshold |
+| **Earrings VTO** | `POST /s2s/v2.0/task/2d-vto/earring` | Gold vs silver, one metal per ear |
+| **Hair Frizziness Detection** | `POST /s2s/v2.0/task/hair-frizziness-detection` | SplitHair: frizz level per side (beta) |
 | **Photo Background Blur** | `POST /s2s/v2.0/task/bg-blur` | Share card and reel, on a copy only |
 | Credits | `GET /s2s/v1.0/client/credit` | Units panel in Settings |
 
@@ -88,7 +92,7 @@ flowchart LR
 | Validation | Zod on every external payload (YouCam responses, agent requests) |
 | Charts | Recharts |
 | Assistant | Groq OpenAI-compatible chat completions with tool calling (`openai/gpt-oss-120b`), plain `fetch` |
-| Tests | Vitest: 82 tests over pure modules and recorded fixtures |
+| Tests | Vitest: 90 tests over pure modules and recorded fixtures |
 
 ```
 app/                 screens + route handlers (api/scan, api/scan/[taskId], api/credits, api/agent)
@@ -147,8 +151,7 @@ In development, `/dev/youcam` runs one photo through the full pipeline and shows
 ## Limitations and roadmap
 
 - Thresholds are the documented starting values. They need calibration with more real scans.
-- **Gold vs silver earrings (on hold).** The earring VTO call works and is recorded (`tests/fixtures/youcam/earring`). With our own drawn hoop images, though, the engine rendered the earrings as a few pixels, so we don't ship a preview we can't stand behind. It needs real product photos.
-- **SplitHair frizz trial (dropped).** `hair-frizziness-detection` takes three views and returns one combined score, so there is no per-side value to compare.
+- **SplitHair is beta.** The frizz API returns one level for three views, so SplitHair scores each side with a front view plus that side twice. A successful response hasn't been recorded with real side photos yet, and frizz has only 4 levels.
 - The Evidence board uses seeded example data. Pooling opt-in results needs a server store.
 - Planned: crossover round, blinded A/B kits, brand portal, Hindi UI.
 

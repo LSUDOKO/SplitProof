@@ -12,6 +12,9 @@ export const YOUCAM_ERROR_MESSAGES: Record<string, string> = {
   error_pose: "Look straight at the camera with your head level.",
   error_nsfw_content_detected: "This photo can't be processed. Please use a plain selfie.",
   error_invalid_params: "That option isn't supported. Please pick another.",
+  error_mismatch_image_size: "All three photos need the same size. Please retake them.",
+  error_face_angle_invalid: "Front photo: look straight ahead. Side photos: turn your head well to the side.",
+  error_insufficient_lighting: "Too dark. Face a window or turn on a light.",
   rate_limited: "Too many scans in a short time. Wait a minute and try again.",
   timeout: "The analysis took too long. Please try again.",
 };

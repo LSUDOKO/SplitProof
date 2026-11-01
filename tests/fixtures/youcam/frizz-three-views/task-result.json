@@ -1,9 +1,0 @@
-{
-  "status": 200,
-  "data": {
-    "error": "error_face_angle_invalid",
-    "error_message": "The face angle is not within the supported range. For front-facing photos, keep the head within 10°; for side-facing photos, use more than 15°.",
-    "results": null,
-    "task_status": "error"
-  }
-}
