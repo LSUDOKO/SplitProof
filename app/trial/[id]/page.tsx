@@ -9,6 +9,7 @@ import { TrialState } from "@/components/TrialNotFound";
 import { ButtonLink, DemoBadge, Panel, SideTag } from "@/components/ui";
 import { VerdictBadge } from "@/components/VerdictBadge";
 import { BASELINE_SCANS } from "@/lib/config";
+import { naturalAsymmetry } from "@/lib/stats/asymmetryReport";
 import { explainVerdict, controlSide } from "@/lib/trial/explain";
 import { addDays, nextScanDay } from "@/lib/trial/plan";
 import { useTrial } from "@/lib/useTrial";
@@ -29,6 +30,7 @@ export default function TrialDashboard() {
     scans.filter((s) => s.context).map((s) => [s.dayIndex, [s.context!.sleepHours !== undefined && `${s.context!.sleepHours} h sleep`, s.context!.stress && `stress ${s.context!.stress}/5`, s.context!.period && "period"].filter(Boolean).join(", ")]),
   );
   const h2h = t.mode === "head_to_head";
+  const asym = inBaseline || h2h ? [] : naturalAsymmetry(scans);
 
   return (
     <AppShell back="/trials" action={t.isDemo ? <DemoBadge /> : undefined}>
@@ -108,6 +110,22 @@ export default function TrialDashboard() {
           Ask the trial assistant
         </ButtonLink>
       </div>
+
+      {asym.length > 0 && (
+        <Panel className="mt-3">
+          <h2 className="font-semibold">Your natural asymmetry</h2>
+          <ul className="mt-2 space-y-1">
+            {asym.map((n) => (
+              <li key={n.concern}>
+                Before the trial, your {n.side} cheek showed about {n.pct}% more {CONCERN_LABELS[n.concern].toLowerCase()} than your {n.side === "left" ? "right" : "left"}.
+              </li>
+            ))}
+          </ul>
+          <p className="mt-2 text-sm text-muted">
+            Common everyday reasons: the side you sleep on, sun through a car window, the hand you hold your phone with. The baseline removes this, so it doesn&apos;t affect the verdict.
+          </p>
+        </Panel>
+      )}
 
       <Panel className="mt-3">
         <h2 className="mb-4 font-semibold">Assistant activity</h2>

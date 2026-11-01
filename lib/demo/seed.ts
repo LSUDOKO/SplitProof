@@ -55,7 +55,7 @@ const SPECS: DemoSpec[] = [
     },
     startDaysAgo: 16,
     deadlineInDays: 14,
-    baselineA: { hd_acne: 0.12, hd_redness: -0.05 },
+    baselineA: { hd_acne: 0.12, hd_redness: -0.3 },
     control: { hd_acne: 0.09, hd_redness: 0.16 },
     scans: [
       { day: 3, delta: { hd_acne: -0.02, hd_redness: 0.01 }, context: { sleepHours: 7 }, adherence: 1 },
