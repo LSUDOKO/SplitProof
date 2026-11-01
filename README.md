@@ -1,159 +1,235 @@
-# SplitSide: your face is the control group
+<div align="center">
+
+# SplitSide
+
+### Your face is the control group.
 
 **Measure what works. Preview before you buy. Always half-and-half, always honest.**
 
-SplitSide is an at-home **split-face skincare trial** app. You put a new product on one cheek only, and the other cheek stays untouched as the control. **YouCam AI Skin Analysis** then measures both halves in the same photo. Light, sleep, stress, weather and hormones hit both sides equally, so they cancel out. What's left is the product's real effect.
+An at-home split-face skincare trial app, built on the YouCam API.
+Skin AI track, [YouCam API Skin AI & eCommerce VTO Hackathon](https://youcam-api-skin-ai-ecommerce.devpost.com/).
 
-Built for the **YouCam API Skin AI & eCommerce VTO Hackathon** (Perfect Corp, Devpost), Skin AI track.
+![Next.js 16](https://img.shields.io/badge/Next.js-16-1f2b23) ![TypeScript strict](https://img.shields.io/badge/TypeScript-strict-285fa9) ![YouCam APIs: 9](https://img.shields.io/badge/YouCam%20APIs-9-4b674a) ![Tests: 99 passing](https://img.shields.io/badge/tests-99%20passing-356a33) ![Installable PWA](https://img.shields.io/badge/PWA-installable-4b674a) ![License: MIT](https://img.shields.io/badge/license-MIT-66766a)
 
-| Landing | Your trials | Trial dashboard | Irritation stop | Preview mode |
-|---|---|---|---|---|
-| ![Landing](docs/screenshots/landing.png) | ![Trials](docs/screenshots/trials.png) | ![Dashboard](docs/screenshots/dashboard.png) | ![Stop verdict](docs/screenshots/stop-verdict.png) | ![Preview](docs/screenshots/preview.png) |
+<img src="docs/gifs/landing.gif" alt="Scrolling the SplitSide landing page: a face in the scanner oval gets its mesh drawn, then splits into a blue treated half and an amber control half" width="280" />
 
-Demo video: _link added at submission_
+**Demo video:** _link added at submission_ · **Live app:** _link added after deploy_
 
-## Why it exists
+</div>
 
-People buy skincare without knowing whether it works. Before-and-after selfies can't tell them, because a bad night or a cloudy window changes a skin score more than most products do. Dermatology solved this long ago with the split-face trial, where one side of the face is the control. SplitSide brings that method to shoppers. It answers "is this product working on my skin?" with **Working / No real difference / Stop**, before the store's return window closes.
+---
 
-## What it does
+## The problem
 
-- **Guided capture.** Front camera with live MediaPipe face landmarks. Checks for centring, head pose, size and eyes/mouth, plus a ghost outline of your first scan. Auto-captures after 0.6 s of passing every check.
-- **Light Balance Gate.** Compares the median brightness of the two cheek areas before anything is uploaded, and blocks side light, darkness, glare and blur.
-- **Randomised side.** A cryptographic coin flip decides which cheek gets the product, so you can't pick your "better" side.
-- **Split engine.** Fits the facial midline and builds two mirror-image cheek areas of equal size, with a buffer band down the middle. It then measures how much of each area every YouCam concern mask covers.
-- **Statistics, not vibes.** Three baseline scans give your personal noise range (SDC). The difference-in-differences of the log treated/control ratio produces the verdict, with confidence, early stopping and a 7-day extension if the return window allows.
-- **Irritation sentinel.** Redness or breakouts rising on the treated side only, or reported burning or stinging, mean an immediate STOP with safety advice. The threshold is lower for Fitzpatrick IV–VI with harsh actives.
-- **Trial assistant.** An LLM agent with tools over your trial numbers. It explains the verdict, drafts the return request and suggests a gentler next trial. It never sees photos and never invents numbers. A deterministic manager runs the trial even without the LLM.
-- **Claim Check.** YouCam AI Skin Simulation shows what the box's promise would look like on your own baseline photo, beside the measured result. It is clearly labelled as a simulation.
-- **Preview mode ("split everything").** Before you buy, the product goes on half of you and the real you stays on the other half, in one photo, always labelled *Preview: simulated*:
-  - **Half-face foundation swatch.** YouCam makeup try-on renders one or two shades. A seam score (CIEDE2000 between your bare cheeks and the same cheeks with the shade) says "Blends well", "Slightly light" or "Too dark", so you buy one shade instead of two. The shortlist comes from your skin tone measured by YouCam skin tone analysis.
-  - **Half-head hair colour.** A new colour on one side of your head, your current colour on the other, with three suggestions that explain why they suit your undertone.
-  - **Gold or silver?** One gold hoop on one ear and one silver hoop on the other, in the same photo, with an undertone hint. The hoop photos are a CC0 museum object (The Met); the silver one is the same hoop recoloured so only the metal differs.
-- **SplitHair (beta).** An anti-frizz product on one side of the parting. Each check-in rates frizz per side with YouCam hair frizziness detection (front + that side's view), and an ordinal difference-in-differences counts only full-level changes that repeat. Confidence stays low by design.
-- **Measured skin type.** YouCam's Fitzpatrick analyser reads your phototype from one photo. Darker phototypes get an earlier irritation alert with strong actives, because they are more prone to dark marks after irritation.
-- **Makeup wear test.** Foundation on one half for a week, measuring breakouts, redness and oiliness against the bare half. It answers "does this foundation break me out?" with the same engine.
-- **Share card and story reel.** A PNG result card and a 7-second reel (day 0 → last day → verdict) built from your real photos. Eyes are always pixelated, and YouCam background blur hides your room on a copy of the photo.
-- **Head-to-head mode.** Budget dupe on one cheek, premium original on the other.
-- **Skin Passport.** Ingredient patterns across your trials, such as "fragrance appeared in 2 of your irritating products", plus a pre-purchase ingredient check.
-- **Evidence board.** Pooled anonymous verdicts per product, split by skin type. It currently shows example data, clearly labelled.
-- **Demo mode.** Four seeded trials (Working, Stop, Head-to-head no difference, early Stop), all badged **Demo data**. You can explore every screen without a camera.
-- **Private by design.** Photos, masks and results live in IndexedDB on the phone. Delete everything takes one tap.
+People buy skincare without knowing whether it works. Before-and-after selfies can't tell them: a bad night or a cloudy window changes a skin score more than most products do.
 
-## YouCam APIs used, and why
+Dermatology solved this long ago with the **split-face trial**, where one side of the face is the control. SplitSide brings that method home:
 
-| API | Endpoint | Why |
+1. A coin flip picks a cheek. The product goes there only.
+2. Every couple of days, one guided selfie. **YouCam AI Skin Analysis** measures both halves of that same photo.
+3. Light, sleep, stress and weather hit both sides equally, so they cancel out. What's left is the product.
+
+The answer is **Working, No real difference, or Stop**, delivered before the store's return window closes.
+
+## See it
+
+| Onboarding | A trial, start to verdict | Irritation stop |
 |---|---|---|
-| File upload | `POST /s2s/v2.0/file` + presigned `PUT` | Registers the selfie and uploads the bytes server-side, so the key never reaches the browser |
-| **AI Skin Analysis (HD)** | `POST /s2s/v2.0/task/skin-analysis`, `GET …/{task_id}` | 8 HD concerns (`hd_redness, hd_acne, hd_oiliness, hd_age_spot, hd_texture, hd_pore, hd_radiance, hd_moisture`) with `enable_mask_overlay: false`, so there is **one mask per concern**. The masks are the measuring instrument: SplitSide splits them at the midline instead of only reading whole-face scores. `raw_score` is stored for comparisons |
-| **AI Skin Simulation** | `POST /s2s/v2.0/task/skin-simulation`, `GET …/{task_id}` | **Claim Check**: renders the brand's claimed improvement on your baseline photo ("What the brand promises", always labelled *Simulation*) next to what your scans actually measured. Never feeds the verdict |
-| **Makeup VTO** | `POST /s2s/v2.0/task/makeup-vto` (foundation) | Half-face shade swatch. Composited at the facial midline with your bare half or a second shade; seam score computed client-side |
-| **Hair Color VTO** | `POST /s2s/v2.0/task/hair-color` | Half-head hair colour preview |
-| **Skin Tone Analysis** | `POST /s2s/v2.0/task/skin-tone-analysis` | Measured skin colour, undertone and hair colour, which drive the shade and hair shortlists |
-| **Fitzpatrick Skin Type** | `POST /s2s/v2.0/task/fitzpatrick-scale-analyzer` | Phototype I–VI from a photo, which tunes the irritation-sentinel threshold |
-| **Earrings VTO** | `POST /s2s/v2.0/task/2d-vto/earring` | Gold vs silver, one metal per ear |
-| **Hair Frizziness Detection** | `POST /s2s/v2.0/task/hair-frizziness-detection` | SplitHair: frizz level per side (beta) |
-| **Photo Background Blur** | `POST /s2s/v2.0/task/bg-blur` | Share card and reel, on a copy only |
-| Credits | `GET /s2s/v1.0/client/credit` | Units panel in Settings |
+| ![Welcome flow with intro slides, name and theme choice](docs/gifs/onboarding.gif) | ![Home, dashboard and verdict for a demo trial](docs/gifs/trial.gif) | ![A stop verdict with safety advice](docs/gifs/stop.gif) |
 
-Every API above has a real recorded response in [`tests/fixtures/youcam/`](tests/fixtures/youcam), validated by tests. A real HD response and its masks are recorded in [`tests/fixtures/youcam/cheeks-hd`](tests/fixtures/youcam/cheeks-hd), and the parser and mask decoder are tested against them. One finding: HD masks are **display overlays, not plain alpha maps**. Undetected pixels are a grey `#3D3D3D` dimming layer, and detections are coloured with alpha on a per-concern scale. The decoder handles this (see [`lib/split/burden.ts`](lib/split/burden.ts) and [`docs/05-youcam-api-reference.md`](docs/05-youcam-api-reference.md)).
+| Money saved | Light and dark themes |
+|---|---|
+| ![Skin Passport with the money-saved tracker](docs/gifs/passport.gif) | ![Switching between light and dark themes](docs/gifs/theme.gif) |
 
-Deliberately **not** used on analysis photos: lighting, colour correction, enhancement, face reshape or any beauty filter. Those would fake the measurement.
+All recordings use the app's clearly labelled demo data. No real faces.
+
+| Home | Scanner | Verdict | Preview | Assistant | Dark |
+|---|---|---|---|---|---|
+| ![Home](docs/screenshots/home.png) | ![Scanner](docs/screenshots/scanner.png) | ![Verdict](docs/screenshots/verdict.png) | ![Preview](docs/screenshots/preview.png) | ![Assistant](docs/screenshots/assistant.png) | ![Dark](docs/screenshots/home-dark.png) |
+
+**Try it without a camera:** open the app and tap *Explore a demo trial*.
+
+## Features
+
+### Measure: real trials on your face
+
+- **Guided scanner.** Live MediaPipe face landmarks check centring, head pose, distance, and eyes and mouth, against a ghost outline of your first scan. Auto-captures after 0.6 s of passing every check.
+- **Light Balance Gate.** Compares median brightness of the two cheeks before upload and blocks side light, darkness, glare and blur.
+- **Voice guidance.** Optional spoken prompts during capture, for accessibility.
+- **Split engine.** Fits the facial midline and builds two mirror-image cheek areas of equal size, with a buffer band for product spreading. Then measures how much of each area every YouCam concern mask covers.
+- **Statistics, not vibes.** Three baseline scans give your personal noise range. A difference-in-differences verdict adds confidence, early stopping, and a 7-day extension if the return window allows.
+- **Irritation sentinel.** Redness or breakouts rising on the treated side only, or reported burning or stinging, trigger an immediate Stop with safety advice. The threshold is lower for Fitzpatrick IV–VI with strong actives.
+- **Measured skin type.** YouCam reads your Fitzpatrick type from a photo. You can always change it.
+- **Head-to-head.** Budget dupe on one cheek, premium original on the other.
+- **Makeup wear test.** "Does this foundation break me out?" Seven days on one half, against the bare half.
+- **SplitHair (beta).** An anti-frizz product on one side of your parting, rated per side. Confidence stays low by design: frizz has only 4 levels.
+- **Context that cancels out.** Log sleep, stress and your cycle, and optionally pull humidity and air quality. A chart shows these moving your whole-face score while the treated-vs-control line ignores them.
+
+### Preview: before you buy
+
+Half simulated product, half the real you, in one photo. Always labelled *Preview: simulated*, never counted as a measurement.
+
+- **Foundation shade swatch.** Your skin tone, measured by YouCam, shortlists 3 of 24 generic shades. Then see one shade next to bare skin, or two side by side. A seam score (CIEDE2000) says "Blends well", "Slightly light" or "Too dark", so you buy one shade instead of two.
+- **Half-head hair colour.** A new colour on one side of your head, with suggestions that explain why they suit your undertone.
+- **Gold or silver?** One metal on each ear in the same photo.
+- **Claim Check.** The box's promise simulated on your own baseline photo, next to what your scans measured.
+
+### Decide: what to do next
+
+- **Keep or return.** A return countdown, and a ready-to-send return request with your trial evidence.
+- **Money saved.** Refunds plus the premium products you didn't need, using the prices you typed.
+- **Skin Passport.** Ingredient patterns across your trials, and a pre-purchase check on any ingredient list.
+- **Trial assistant.** An LLM agent with tools over your numbers. It explains the verdict, drafts messages, and replies in your language. It never sees photos and can't invent or override a measurement.
+- **Barcode fill.** Scan a product to fill in its name and ingredients.
+- **Dermatologist report.** A one-page printable summary of the trial.
+- **Calendar export.** Every scan day, as one calendar file.
+- **Privacy-safe sharing.** A result card and a 7-second reel from real photos, with eyes always pixelated and your room blurred on a copy.
+- **Evidence board.** How pooled anonymous results would look per product and skin type. It shows example data, clearly labelled, today.
+
+### Feel: a finished product
+
+- Sage design system with **light and dark themes**, applied before first paint so there's no flash
+- **GSAP motion**: a scrubbed scroll story on the landing page, verdict reveals, coin flip, page entrances. All of it respects reduced-motion settings, and it stays off the live scanner so face tracking keeps its frame budget
+- **Installable PWA** with an offline shell
+- **No accounts.** Everything lives on your phone. That's deliberate: nothing to sign in to, no profile to hand over
+
+## APIs and integrations
+
+### YouCam (9 APIs)
+
+Every API has a real recorded response in [`tests/fixtures/youcam/`](tests/fixtures/youcam), checked by tests. The one exception is frizz, where only an error response is recorded so far (see [Known limits](#known-limits)).
+
+| API | Endpoint (`/s2s/v2.0/task/…`) | Why SplitSide uses it |
+|---|---|---|
+| **AI Skin Analysis (HD)** | `skin-analysis` | The measuring instrument. One mask per concern, split at the midline, rather than only reading whole-face scores |
+| **AI Skin Simulation** | `skin-simulation` | Claim Check |
+| **Makeup VTO** | `makeup-vto` | Half-face foundation swatch |
+| **Hair Color VTO** | `hair-color` | Half-head colour preview |
+| **Earrings VTO** | `2d-vto/earring` | Gold on one ear, silver on the other |
+| **Skin Tone Analysis** | `skin-tone-analysis` | Shade and hair-colour shortlists, undertone |
+| **Fitzpatrick Skin Type** | `fitzpatrick-scale-analyzer` | Tunes the irritation threshold |
+| **Hair Frizziness Detection** | `hair-frizziness-detection` | SplitHair (beta) |
+| **Photo Background Blur** | `bg-blur` | Share card, on a copy only |
+
+The file upload (`POST /s2s/v2.0/file` plus presigned PUT) and credit endpoints support all of these.
+
+**Deliberately not used on analysis photos:** lighting, colour correction, enhancement, face reshape or any beauty filter. Those would fake the measurement. Aging simulation and face swap are excluded too.
+
+A finding worth sharing: **HD masks are display overlays, not plain alpha maps.** Undetected pixels are a grey `#3D3D3D` dimming layer, and detections are coloured with alpha on a per-concern scale. See [`lib/split/burden.ts`](lib/split/burden.ts) and [`docs/05-youcam-api-reference.md`](docs/05-youcam-api-reference.md).
+
+### Third-party
+
+| Service | Used for | Key needed |
+|---|---|---|
+| [Groq](https://groq.com) | Trial assistant (OpenAI-compatible tool calling) | Yes, optional: without it, answers come from the deterministic engine |
+| [Open Beauty Facts](https://world.openbeautyfacts.org) | Barcode to product name and ingredients | No |
+| [Open-Meteo](https://open-meteo.com) | Humidity, UV and air quality per scan, opt-in, location rounded to about 10 km | No |
+| [MediaPipe](https://ai.google.dev/edge/mediapipe) | Face landmarks in the browser, self-hosted | No |
 
 ## Architecture
 
 ```mermaid
 flowchart LR
-  subgraph Phone["Phone (PWA)"]
-    CAM[Camera + MediaPipe landmarks] --> GATE[Pose gate + Light Balance Gate]
-    GATE --> JPG[HD frame ≥1080 px]
-    MASKS[Concern masks] --> SPLIT[Split engine: midline, mirror ROIs, burdens]
-    SPLIT --> STATS[Verdict engine: baseline, DiD, sentinel]
+  subgraph Phone["Phone (PWA): photos and results stay here"]
+    CAM[Camera + MediaPipe] --> GATE[Pose gate + Light Balance Gate]
+    GATE --> JPG[Un-enhanced HD frame]
+    MASKS[Concern masks] --> SPLIT[Split engine]
+    SPLIT --> STATS[Verdict engine + sentinel]
     STATS --> IDB[(IndexedDB)]
-    STATS --> UI[Dashboard, verdict, passport]
+    STATS --> UI[Screens]
     STATS --> SUM[Derived numbers only]
+    PREV[Preview photo] --> COMP[Midline composite + seam score]
   end
-  subgraph Server["Next.js route handlers"]
-    SCAN["/api/scan"] 
-    POLL["/api/scan/:taskId"]
+  subgraph Server["Next.js route handlers: hold the keys, store nothing"]
+    SCAN["/api/scan"]
+    TASK["/api/preview, /api/profile, /api/earrings, /api/hair"]
     AGENT["/api/agent"]
+    PROD["/api/product"]
   end
   JPG --> SCAN --> YC[(YouCam API)]
-  POLL --> YC
-  YC --> POLL --> MASKS
-  SUM --> AGENT --> LLM[(Groq LLM, tool calls)]
-```
-
-| Layer | Choice |
-|---|---|
-| App | Next.js 16 (App Router), TypeScript strict, Tailwind CSS v4, installable PWA |
-| Face landmarks | `@mediapipe/tasks-vision` Face Landmarker, model and WASM self-hosted in `public/mediapipe` |
-| Storage | IndexedDB via `idb`, on device only |
-| Validation | Zod on every external payload (YouCam responses, agent requests) |
-| Charts | Recharts |
-| Assistant | Groq OpenAI-compatible chat completions with tool calling (`openai/gpt-oss-120b`), plain `fetch` |
-| Tests | Vitest: 90 tests over pure modules and recorded fixtures |
-
-```
-app/                 screens + route handlers (api/scan, api/scan/[taskId], api/credits, api/agent)
-components/          SplitFace, SplitPhoto, charts, CheckIn, AppShell…
-lib/split/           midline fit, face-frame ROIs, mask decoding and burden
-lib/capture/         pose gate, Light Balance Gate, MediaPipe wrapper, frame capture, YouCam polling
-lib/stats/           asymmetry, baseline/SDC, verdict, sentinel, natural asymmetry
-lib/trial/           planning, explanations, deterministic orchestrator
-lib/agent/           system prompt, tools, tool loop, safety guard, drafts
-lib/youcam/          client, schemas, parser, errors, concern sets
-tests/               unit tests + fixtures/youcam (real recorded response)
-docs/                product spec, algorithms, API reference, plan
+  YC --> SCAN --> MASKS
+  PREV --> TASK --> YC
+  TASK --> COMP
+  SUM --> AGENT --> LLM[(Groq)]
+  UI --> PROD --> OBF[(Open Beauty Facts)]
 ```
 
 ### The maths in one paragraph
 
-For each concern, burden = strength-weighted share of a cheek area that the mask covers. The asymmetry index is `A = ln((burden_treated + ε) / (burden_control + ε))`. Three baseline scans give `A0` and `sd` (floored at 0.05), so `SDC = 1.96·√2·sd`. After baseline, `Δ = A − A0`. The verdict is **Working** when the mean of the last two Δ is ≤ −SDC and both are ≤ −0.75·SDC. **Worse** is the mirror case. **No difference** applies at the planned end with |m| < SDC, and **Stop** whenever the sentinel fires. Full details are in [`docs/07-algorithms.md`](docs/07-algorithms.md).
+For each concern, burden is the strength-weighted share of a cheek area that the mask covers. The asymmetry index is `A = ln((burden_treated + ε) / (burden_control + ε))`. Three baseline scans give `A0` and `sd` (floored at 0.05), so the smallest detectable change is `SDC = 1.96·√2·sd`. After baseline, `Δ = A − A0`. **Working** means the mean of the last two Δ is ≤ −SDC with both ≤ −0.75·SDC. **Worse** is the mirror case. **No difference** applies at the planned end with |mean Δ| < SDC. **Stop** applies whenever the sentinel fires. Full details are in [`docs/07-algorithms.md`](docs/07-algorithms.md).
+
+### Project layout
+
+```
+app/                 screens + route handlers
+components/          SplitPreview, ScannerFrame, charts, CheckIn, motion, landing/…
+lib/split/           midline fit, face-frame ROIs, mask decoding and burden
+lib/capture/         pose gate, Light Balance Gate, MediaPipe, voice guidance
+lib/stats/           asymmetry, baseline/SDC, verdict, sentinel
+lib/preview/         CIELAB + CIEDE2000, split composite, seam score, shade and hair shortlists
+lib/trial/           planning, explanations, orchestrator, money saved
+lib/agent/           system prompt, tools, tool loop, safety guard, drafts
+lib/hair/            SplitHair model and ordinal verdict
+lib/integrations/    Open Beauty Facts, Open-Meteo
+lib/youcam/          client, generic task layer, schemas, parser, errors
+tests/               unit tests + recorded fixtures
+docs/                product spec, algorithms, API reference, plan
+```
 
 ## Setup
 
-Requirements: Node 22+, npm.
+Requires Node 22+.
 
 ```bash
 git clone https://github.com/LSUDOKO/SplitProof.git
 cd SplitProof
-npm install
+npm install --legacy-peer-deps
 cp .env.example .env         # then fill in the keys
 npm run dev                  # http://localhost:3000
 ```
 
 | Variable | Required | Purpose |
 |---|---|---|
-| `YOUCAM_API_KEY` | for real scans | YouCam API key (console → API Keys). Server only |
-| `YOUCAM_BASE_URL` | no | Defaults to `https://yce-api-01.makeupar.com` |
-| `GROQ_API_KEY` | no | Trial assistant. Without it, answers fall back to the deterministic engine text |
-| `GROQ_MODEL` | no | Defaults to `openai/gpt-oss-120b` |
+| `YOUCAM_API_KEY` | For real scans and previews | YouCam console → API Keys. Server only |
+| `YOUCAM_BASE_URL` | No | Defaults to `https://yce-api-01.makeupar.com` |
+| `GROQ_API_KEY` | No | Trial assistant; falls back to engine text without it |
+| `GROQ_MODEL` | No | Defaults to `openai/gpt-oss-120b` |
 
-The camera needs HTTPS on phones. Use a Vercel preview, or `npx next dev --experimental-https` on your LAN.
+The demo works with no keys. The camera needs HTTPS on phones: use a Vercel deployment, or `npx next dev --experimental-https` on your LAN.
 
 ```bash
-npm test            # unit tests (no network, no units spent)
+npm test                     # unit tests: no network, no units spent
 npm run lint
 npm run build
-node --env-file=.env scripts/record-fixture.mjs photo.jpg   # record a new YouCam fixture (~16 units)
+node scripts/record-gifs.mjs # re-record README GIFs (needs the dev server on :3100)
 ```
 
-In development, `/dev/youcam` runs one photo through the full pipeline and shows the ROI overlay.
+In development, `/dev/youcam` runs one photo through the full pipeline and shows the measured areas.
 
 ## Privacy and safety
 
-- Photos go to YouCam only for analysis (YouCam deletes results within 24 h). Everything else stays on the device.
+- Photos go to YouCam only for analysis or a preview you asked for. YouCam deletes results within 24 hours. Everything else stays on the device.
 - The assistant receives derived numbers and text, never images.
 - API keys live only in server environment variables (verified absent from the built client bundle).
-- SplitSide is a cosmetic decision tool, not a medical device, and never diagnoses or treats anything. Every STOP includes the advice to stop the product, rinse, use a plain moisturiser, and see a doctor if it is painful, spreading, blistering or not settling. The assistant's replies are post-checked to always include it.
+- Location is opt-in, rounded to about 10 km, and never stored.
+- SplitSide is a cosmetic decision tool, not a medical device. Every Stop includes the advice to stop the product, rinse, use a plain moisturiser, and see a doctor if it is painful, spreading, blistering or not settling. The assistant's replies are checked in code to always include it.
 
-## Limitations and roadmap
+## Known limits
 
-- Thresholds are the documented starting values. They need calibration with more real scans.
-- **SplitHair is beta.** The frizz API returns one level for three views, so SplitHair scores each side with a front view plus that side twice. A successful response hasn't been recorded with real side photos yet, and frizz has only 4 levels.
-- The Evidence board uses seeded example data. Pooling opt-in results needs a server store.
-- Planned: crossover round, blinded A/B kits, brand portal, Hindi UI.
+- **Not yet proven on a real phone.** Camera capture has been exercised on a fake camera feed and one stock portrait, not a real scan session on a phone.
+- **Thresholds** are the documented starting values and need calibration with more real scans.
+- **SplitHair is beta.** The frizz API returns one level for three views, so SplitHair scores each side from a front view plus that side twice. A successful response hasn't been recorded with real side photos yet.
+- **The evidence board** shows example data. Pooling opt-in results needs a server store.
+- **Barcode camera scanning** needs the browser's `BarcodeDetector` (Android Chrome). Typing the number works everywhere, and Open Beauty Facts doesn't know every product.
+- **Earring images** are one museum hoop in two colours, not a retail catalogue.
+
+## Roadmap
+
+Crossover rounds, blinded A/B kits, a brand portal with Split Kits, pooled evidence, skin-tone equity reports, a store plugin, and a Hindi interface.
+
+## Credits
+
+Hoop photo: The Metropolitan Museum of Art, CC0. Product illustrations are original and unbranded. Skin measurements by YouCam AI (Perfect Corp).
 
 ## License
 

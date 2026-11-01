@@ -18,7 +18,7 @@ export function ScannerFrame({ children, status, live = false }: { children: Rea
           const y = 205 - ry * Math.cos(t);
           const nx = Math.sin(t);
           const ny = -Math.cos(t);
-          return <line key={i} x1={x} y1={y} x2={x - nx * 7} y2={y - ny * 7} stroke="var(--color-forest)" strokeOpacity={live ? 0.8 : 0.45} strokeWidth="1.4" />;
+          return <line key={i} x1={x.toFixed(2)} y1={y.toFixed(2)} x2={(x - nx * 7).toFixed(2)} y2={(y - ny * 7).toFixed(2)} stroke="var(--color-forest)" strokeOpacity={live ? 0.8 : 0.45} strokeWidth="1.4" />;
         })}
       </svg>
       <div className="absolute inset-[14px] overflow-hidden rounded-[999px] bg-forest/80">{children}</div>
