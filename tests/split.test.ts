@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { detectMaskChannel, isSplittable, maskBurden } from "@/lib/split/burden";
+import { isSplittable, maskBurden, toStrength } from "@/lib/split/burden";
 import { fitMidline } from "@/lib/split/midline";
 import { buildRoiIndex, faceGeometry, sideOfPoint } from "@/lib/split/rois";
 import { makeImage, syntheticLandmarks } from "./helpers/face";
@@ -19,8 +19,8 @@ describe("split engine", () => {
     const lm = syntheticLandmarks(face);
     const roi = buildRoiIndex(W, H, faceGeometry(lm, "cheeks"));
     const mask = makeImage(W, H, (x) => [0, 0, 0, x > 200 ? 200 : 0]);
-    const b = maskBurden(mask, roi);
-    expect(b.left).toBeCloseTo(200 / 255, 2);
+    const b = maskBurden(toStrength(mask), roi);
+    expect(b.left).toBeCloseTo(1, 2);
     expect(b.right).toBe(0);
   });
 
@@ -35,7 +35,7 @@ describe("split engine", () => {
     const roi = buildRoiIndex(W, H, faceGeometry(lm, "forehead"));
     const band = 0.035 * face.w;
     const mask = makeImage(W, H, (x) => [0, 0, 0, Math.abs(x - 200) < band ? 255 : 0]);
-    const b = maskBurden(mask, roi);
+    const b = maskBurden(toStrength(mask), roi);
     expect(b.left).toBe(0);
     expect(b.right).toBe(0);
   });
@@ -49,23 +49,26 @@ describe("split engine", () => {
       const u = (x - 200) * Math.cos(t) + (y - 250) * Math.sin(t);
       return [0, 0, 0, u > 0 ? 220 : 0];
     });
-    const b = maskBurden(mask, roi);
-    expect(b.left).toBeCloseTo(220 / 255, 2);
+    const b = maskBurden(toStrength(mask), roi);
+    expect(b.left).toBeCloseTo(1, 2);
     expect(b.right).toBeLessThan(0.01);
   });
 
   it("samples masks with a different resolution than the photo", () => {
     const roi = buildRoiIndex(W, H, faceGeometry(syntheticLandmarks(face), "under_eyes"));
     const mask = makeImage(W / 2, H / 2, (x) => [0, 0, 0, x > 100 ? 255 : 0]);
-    const b = maskBurden(mask, roi);
+    const b = maskBurden(toStrength(mask), roi);
     expect(b.left).toBeCloseTo(1, 2);
     expect(b.right).toBe(0);
   });
 
-  it("falls back to luminance for opaque masks and flags uniform masks", () => {
-    const opaque = makeImage(20, 20, (x) => (x > 10 ? [255, 255, 255, 255] : [0, 0, 0, 255]));
-    expect(detectMaskChannel(opaque)).toBe("luma");
-    expect(isSplittable(opaque)).toBe(true);
-    expect(isSplittable(makeImage(20, 20, () => [0, 0, 0, 90]))).toBe(false);
+  it("treats the grey dimming background as undetected and normalises faint alpha", () => {
+    // YouCam convention: #3D3D3D33 background, coloured detections with small alpha (pores ≈ 3).
+    const mask = makeImage(20, 20, (x) => (x > 10 ? [255, 255, 255, 3] : [61, 61, 61, 51]));
+    const s = toStrength(mask);
+    expect(s.values[15]).toBe(255);
+    expect(s.values[5]).toBe(0);
+    expect(isSplittable(s)).toBe(true);
+    expect(isSplittable(toStrength(makeImage(20, 20, () => [61, 61, 61, 51])))).toBe(false);
   });
 });

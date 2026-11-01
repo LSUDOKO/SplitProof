@@ -1,0 +1,133 @@
+{
+  "status": 200,
+  "data": {
+    "error": null,
+    "results": {
+      "output": [
+        {
+          "ui_score": 69,
+          "mask_urls": [
+            "https://yce-us.s3-accelerate.amazonaws.com/ttl30/redacted/hd_moisture_output.png"
+          ],
+          "raw_score": 46.16913199424744,
+          "type": "hd_moisture",
+          "url": null
+        },
+        {
+          "ui_score": 77,
+          "mask_urls": [
+            "https://yce-us.s3-accelerate.amazonaws.com/ttl30/redacted/hd_age_spot_output.png"
+          ],
+          "raw_score": 83.51222229003906,
+          "type": "hd_age_spot",
+          "url": null
+        },
+        {
+          "ui_score": 68,
+          "mask_urls": [
+            "https://yce-us.s3-accelerate.amazonaws.com/ttl30/redacted/hd_radiance_output.png"
+          ],
+          "raw_score": 50.967609882354736,
+          "type": "hd_radiance",
+          "url": null
+        },
+        {
+          "ui_score": 65,
+          "mask_urls": [
+            "https://yce-us.s3-accelerate.amazonaws.com/ttl30/redacted/hd_redness_output.png"
+          ],
+          "raw_score": 43.49045181274414,
+          "type": "hd_redness",
+          "url": null
+        },
+        {
+          "ui_score": 97,
+          "mask_urls": [
+            "https://yce-us.s3-accelerate.amazonaws.com/ttl30/redacted/hd_acne_output.png"
+          ],
+          "raw_score": 95.75160217285156,
+          "type": "hd_acne",
+          "region": "whole",
+          "url": null
+        },
+        {
+          "ui_score": 77,
+          "mask_urls": [
+            "https://yce-us.s3-accelerate.amazonaws.com/ttl30/redacted/hd_oiliness_output.png"
+          ],
+          "raw_score": 72.0801773071289,
+          "type": "hd_oiliness",
+          "url": null
+        },
+        {
+          "ui_score": 74,
+          "mask_urls": [
+            "https://yce-us.s3-accelerate.amazonaws.com/ttl30/redacted/hd_texture_output.png"
+          ],
+          "raw_score": 63.80392156862745,
+          "type": "hd_texture",
+          "region": "whole",
+          "url": null
+        },
+        {
+          "ui_score": 59,
+          "mask_urls": [
+            "https://yce-us.s3-accelerate.amazonaws.com/ttl30/redacted/hd_pore_output_forehead.png"
+          ],
+          "raw_score": 30.785846710205078,
+          "type": "hd_pore",
+          "region": "forehead",
+          "url": null
+        },
+        {
+          "ui_score": 51,
+          "mask_urls": [
+            "https://yce-us.s3-accelerate.amazonaws.com/ttl30/redacted/hd_pore_output_nose.png"
+          ],
+          "raw_score": 11.230278015136719,
+          "type": "hd_pore",
+          "region": "nose",
+          "url": null
+        },
+        {
+          "ui_score": 85,
+          "mask_urls": [
+            "https://yce-us.s3-accelerate.amazonaws.com/ttl30/redacted/hd_pore_output_cheek.png"
+          ],
+          "raw_score": 89.50981140136719,
+          "type": "hd_pore",
+          "region": "cheek",
+          "url": null
+        },
+        {
+          "ui_score": 70,
+          "mask_urls": [
+            "https://yce-us.s3-accelerate.amazonaws.com/ttl30/redacted/hd_pore_output_all.png"
+          ],
+          "raw_score": 55.258934020996094,
+          "type": "hd_pore",
+          "region": "whole",
+          "url": null
+        },
+        {
+          "score": 74.625,
+          "type": "all",
+          "url": null
+        },
+        {
+          "score": 90,
+          "type": "skin_age",
+          "url": null
+        },
+        {
+          "mask_urls": [
+            "https://yce-us.s3-accelerate.amazonaws.com/ttl30/redacted/resize_image.jpg"
+          ],
+          "type": "resize_image",
+          "url": null
+        }
+      ]
+    },
+    "task_status": "success"
+  }
+}

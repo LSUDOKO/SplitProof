@@ -134,6 +134,15 @@ The exact shape of HD region sub-scores in json format (e.g. pore forehead/nose/
 
 ---
 
+## Verified real response (recorded 1 Nov 2026 → `tests/fixtures/youcam/cheeks-hd/`)
+- `POST /s2s/v2.0/file` works for registration (no feature-specific path needed). Bearer `YOUCAM_API_KEY` alone is enough; the console's secret key is not used.
+- Task finished in ~4 s. `data.results.output[]` items:
+  - one item per concern with `type: "hd_*"`, `raw_score`, `ui_score`, `mask_urls: [one URL]`;
+  - region sub-scores are **separate items** with the same `type` plus `region` (`hd_pore`: forehead / nose / cheek / whole; `hd_acne`, `hd_texture`: whole);
+  - meta items: `{type:"all", score}`, `{type:"skin_age", score}`, `{type:"resize_image", mask_urls:[jpg]}`.
+- Mask URLs live under `/ttl30/` and are served as `binary/octet-stream`; download immediately.
+- **Masks are display overlays, not plain alpha maps.** PNG RGBA at the uploaded size (1080×1440). Undetected pixels are a dimming grey `#3D3D3D` at a fixed alpha (0x33/0x5C/0x66) or fully transparent (moisture, radiance). Detected pixels are coloured, with alpha encoding strength on a per-concern scale (pores ≈ 3/255, redness 11–24/255, acne spots opaque). SplitSide therefore treats "coloured, non-grey, non-transparent" as detected and normalises alpha by the mask's 99th-percentile detected alpha (`lib/split/burden.ts`).
+
 ## Concern names
 
 ### HD (SplitSide uses HD only)
