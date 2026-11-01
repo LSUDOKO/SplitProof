@@ -40,3 +40,12 @@ export type OutputItemT = z.infer<typeof OutputItem>;
 export const Credits = z.object({
   results: z.array(z.looseObject({ type: z.string().optional(), amount: z.number(), expiry: z.number().optional() })),
 });
+
+/** Skin Simulation poll (recorded: tests/fixtures/youcam/simulation). Result is one image URL. */
+export const SimulationStatus = z.object({
+  data: z.looseObject({
+    task_status: z.string(),
+    results: z.looseObject({ url: z.string().optional() }).nullish(),
+    error: z.unknown().optional(),
+  }),
+});

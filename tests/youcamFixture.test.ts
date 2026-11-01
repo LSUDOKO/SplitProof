@@ -38,3 +38,17 @@ describe("recorded YouCam HD response", () => {
     }
   });
 });
+
+describe("recorded YouCam skin simulation response", () => {
+  it("validates the single result URL shape", async () => {
+    const { SimulationStatus } = await import("@/lib/youcam/schemas");
+    const sim = SimulationStatus.parse(JSON.parse(readFileSync("tests/fixtures/youcam/simulation/task-result.json", "utf8")));
+    expect(sim.data.task_status).toBe("success");
+    expect(sim.data.results?.url).toMatch(/\.png$/);
+  });
+
+  it("maps trial goals to simulation parameters and drops moisture", async () => {
+    const { simulationParams } = await import("@/lib/youcam/simulation");
+    expect(simulationParams(["hd_acne", "hd_redness", "hd_moisture"], 0.6)).toEqual({ acne: 0.6, redness: 0.6 });
+  });
+});

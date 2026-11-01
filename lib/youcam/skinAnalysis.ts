@@ -2,7 +2,7 @@ import "server-only";
 import type { ConcernKey } from "../types";
 import { youcamJson } from "./client";
 import { YoucamError, extractErrorCode } from "./errors";
-import { FileRegistration, TaskCreated, TaskStatus, type OutputItemT } from "./schemas";
+import { FileRegistration, SimulationStatus, TaskCreated, TaskStatus, type OutputItemT } from "./schemas";
 
 export interface Upload {
   fileId: string;
@@ -52,4 +52,18 @@ export async function fetchMask(url: string): Promise<{ contentType: string; bas
   const buf = Buffer.from(await res.arrayBuffer());
   // Served as binary/octet-stream; the file is always PNG for HD masks.
   return { contentType: "image/png", base64: buf.toString("base64") };
+}
+
+/** AI Skin Simulation (Claim Check only — never fed to the verdict). */
+export async function createSimulation(fileId: string, params: Record<string, number>): Promise<string> {
+  const res = await youcamJson("/s2s/v2.0/task/skin-simulation", TaskCreated, { method: "POST", body: JSON.stringify({ src_file_id: fileId, ...params }) });
+  return res.data.task_id;
+}
+
+export async function getSimulation(taskId: string): Promise<{ status: "running" } | { status: "error"; code: string } | { status: "success"; url: string }> {
+  const res = await youcamJson(`/s2s/v2.0/task/skin-simulation/${encodeURIComponent(taskId)}`, SimulationStatus);
+  const { task_status, results } = res.data;
+  if (task_status === "success" && results?.url) return { status: "success", url: results.url };
+  if (task_status === "error" || task_status === "success") return { status: "error", code: extractErrorCode(res.data) };
+  return { status: "running" };
 }

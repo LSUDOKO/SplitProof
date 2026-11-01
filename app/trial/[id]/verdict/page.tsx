@@ -2,6 +2,7 @@
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { AppShell } from "@/components/AppShell";
+import { ClaimCheck } from "@/components/ClaimCheck";
 import { CopyBox } from "@/components/CopyBox";
 import { DeadlineChip } from "@/components/DeadlineChip";
 import { SplitFace } from "@/components/SplitFace";
@@ -98,6 +99,8 @@ export default function VerdictPage() {
         </dl>
         {v.reasons.length > 0 && <p className="mt-3 text-sm text-muted">{v.reasons.join(". ")}.</p>}
       </Panel>
+
+      {!t.isDemo && !bad && <ClaimCheck trial={t} scans={scans} verdict={v} />}
 
       <div className="mt-4 flex flex-col gap-3">
         {t.returnDeadline && (

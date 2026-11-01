@@ -143,6 +143,12 @@ The exact shape of HD region sub-scores in json format (e.g. pore forehead/nose/
 - Mask URLs live under `/ttl30/` and are served as `binary/octet-stream`; download immediately.
 - **Masks are display overlays, not plain alpha maps.** PNG RGBA at the uploaded size (1080×1440). Undetected pixels are a dimming grey `#3D3D3D` at a fixed alpha (0x33/0x5C/0x66) or fully transparent (moisture, radiance). Detected pixels are coloured, with alpha encoding strength on a per-concern scale (pores ≈ 3/255, redness 11–24/255, acne spots opaque). SplitSide therefore treats "coloured, non-grey, non-transparent" as detected and normalises alpha by the mask's 99th-percentile detected alpha (`lib/split/burden.ts`).
 
+## AI Skin Simulation (verified 1 Nov 2026 → `tests/fixtures/youcam/simulation/`)
+- `POST /s2s/v2.0/task/skin-simulation` with `src_file_id` (or `src_file_url`) and one or more intensities 0–1: `wrinkle, radiance, oiliness, acne, eye_bags, dark_circle, spots, pores, texture, redness` (at least one > 0).
+- Poll `GET /s2s/v2.0/task/skin-simulation/{task_id}`; success returns `data.results.url` (one PNG, under `/ttl30/`).
+- Image spec: short side ≥ 480, long side ≤ 2560, < 10 MB. Units: 1–4 concerns = 4, 5–10 = 6.
+- SplitSide use: Claim Check only, labelled "Simulation"; never on the measurement path.
+
 ## Concern names
 
 ### HD (SplitSide uses HD only)

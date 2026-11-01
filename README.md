@@ -23,6 +23,7 @@ People buy skincare without knowing whether it works. Before-and-after selfies c
 - **Statistics, not vibes.** Three baseline scans give your personal noise range (SDC). The difference-in-differences of the log treated/control ratio produces the verdict, with confidence, early stopping and a 7-day extension if the return window allows.
 - **Irritation sentinel.** Redness or breakouts rising on the treated side only, or reported burning or stinging, mean an immediate STOP with safety advice. The threshold is lower for Fitzpatrick IV–VI with harsh actives.
 - **Trial assistant.** An LLM agent with tools over your trial numbers. It explains the verdict, drafts the return request and suggests a gentler next trial. It never sees photos and never invents numbers. A deterministic manager runs the trial even without the LLM.
+- **Claim Check.** YouCam AI Skin Simulation shows what the box's promise would look like on your own baseline photo, beside the measured result. It is clearly labelled as a simulation.
 - **Head-to-head mode.** Budget dupe on one cheek, premium original on the other.
 - **Skin Passport.** Ingredient patterns across your trials, such as "fragrance appeared in 2 of your irritating products", plus a pre-purchase ingredient check.
 - **Evidence board.** Pooled anonymous verdicts per product, split by skin type. It currently shows example data, clearly labelled.
@@ -35,6 +36,7 @@ People buy skincare without knowing whether it works. Before-and-after selfies c
 |---|---|---|
 | File upload | `POST /s2s/v2.0/file` + presigned `PUT` | Registers the selfie and uploads the bytes server-side, so the key never reaches the browser |
 | **AI Skin Analysis (HD)** | `POST /s2s/v2.0/task/skin-analysis`, `GET …/{task_id}` | 8 HD concerns (`hd_redness, hd_acne, hd_oiliness, hd_age_spot, hd_texture, hd_pore, hd_radiance, hd_moisture`) with `enable_mask_overlay: false`, so there is **one mask per concern**. The masks are the measuring instrument: SplitSide splits them at the midline instead of only reading whole-face scores. `raw_score` is stored for comparisons |
+| **AI Skin Simulation** | `POST /s2s/v2.0/task/skin-simulation`, `GET …/{task_id}` | **Claim Check**: renders the brand's claimed improvement on your baseline photo ("What the brand promises", always labelled *Simulation*) next to what your scans actually measured. Never feeds the verdict |
 | Credits | `GET /s2s/v1.0/client/credit` | Units panel in Settings |
 
 A real HD response and its masks are recorded in [`tests/fixtures/youcam/cheeks-hd`](tests/fixtures/youcam/cheeks-hd), and the parser and mask decoder are tested against them. One finding: HD masks are **display overlays, not plain alpha maps**. Undetected pixels are a grey `#3D3D3D` dimming layer, and detections are coloured with alpha on a per-concern scale. The decoder handles this (see [`lib/split/burden.ts`](lib/split/burden.ts) and [`docs/05-youcam-api-reference.md`](docs/05-youcam-api-reference.md)).
@@ -73,7 +75,7 @@ flowchart LR
 | Validation | Zod on every external payload (YouCam responses, agent requests) |
 | Charts | Recharts |
 | Assistant | Groq OpenAI-compatible chat completions with tool calling (`openai/gpt-oss-120b`), plain `fetch` |
-| Tests | Vitest: 61 tests over pure modules and recorded fixtures |
+| Tests | Vitest: 63 tests over pure modules and recorded fixtures |
 
 ```
 app/                 screens + route handlers (api/scan, api/scan/[taskId], api/credits, api/agent)
@@ -132,7 +134,7 @@ In development, `/dev/youcam` runs one photo through the full pipeline and shows
 ## Limitations and roadmap
 
 - Thresholds are the documented starting values. They need calibration with more real scans.
-- Not built yet, because the REST paths aren't in our verified API reference: Claim Check (`AI_Skin_simulation`), Half-Face Shade Swatch (makeup VTO), Fitzpatrick analysis.
+- Not built yet: Half-Face Shade Swatch (makeup VTO) and automatic Fitzpatrick analysis. For now the phototype is self-reported in the trial wizard.
 - The Evidence board uses seeded example data. Pooling opt-in results needs a server store.
 - Planned: crossover round, blinded A/B kits, brand portal, Hindi UI.
 
