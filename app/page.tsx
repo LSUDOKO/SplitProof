@@ -49,6 +49,14 @@ export default function Landing() {
       </ol>
 
       <section className="mt-14 rounded-panel border border-line bg-card p-5">
+        <h2 className="font-semibold">Measure what works. Preview before you buy.</h2>
+        <p className="mt-2 text-muted">
+          Not sure about a foundation shade or a hair colour? Preview mode puts it on half of your face or head and keeps the real you on the other half, so you can see the edge before you spend. Previews are always labelled as simulations and never count as measurements.
+        </p>
+        <a href="/preview" className="mt-3 inline-block font-semibold underline underline-offset-4">Try a preview</a>
+      </section>
+
+      <section className="mt-3 rounded-panel border border-line bg-card p-5">
         <h2 className="font-semibold">Why not just before-and-after selfies?</h2>
         <p className="mt-2 text-muted">
           A bad night or a cloudy window changes your skin score more than most products do. Dermatologists solve this with split-face trials, where one side of the face is the control. SplitSide brings that method home and tells you whether to keep it, return it, or stop.

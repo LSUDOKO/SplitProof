@@ -12,9 +12,10 @@ Deadline: 2 Nov 2026, 10:15 pm IST. Ordered by risk; each step ends with tests g
 | M5 | Capture | MediaPipe Face Landmarker (self-hosted model), pose/size gate, light gate live, auto-capture, resize ≥1080 short side | Side light blocks capture |
 | M6 | Agent | `/api/agent`: Groq (OpenAI-compatible) tool loop, tools from doc 08, deterministic fallback text, activity feed, return draft, `.ics` reminder | "Is it working?" quotes `get_verdict` numbers |
 | M7 | P1 | Head-to-Head, adherence + symptom check-in, context log, Skin Passport ingredient patterns, Evidence board (seeded), Natural Asymmetry Report, under-eye zone | Each has a test or manual check |
+| M9 | Preview mode (docs/14) | Generic YouCam task layer; makeup VTO shade swatch with CIEDE2000 seam score; hair colour; skin tone + Fitzpatrick profile; bg-blur share card; story reel; makeup wear test | Fixtures recorded for every API; composite/colour/seam tests pass |
 | M8 | Ship | README (setup, diagram, APIs, screenshots), Lighthouse a11y ≥ 90, Vercel deploy | Live URL works on a phone |
 
 ## Deviations from the docs (decided)
 - **LLM provider:** Groq (`openai/gpt-oss-120b`, OpenAI-compatible tool calling) instead of Anthropic — the key available for the hackathon. Called with plain `fetch`, no SDK.
-- **VTO / simulation APIs** (Claim Check, Shade Swatch, Hair Colour): REST paths are not in doc 05, and the rules forbid inventing endpoints. They stay on the roadmap until verified against docs.perfectcorp.com.
+- **VTO / simulation APIs:** every path was verified against the official OpenAPI bundles on docs.perfectcorp.com and recorded as a fixture before use (docs/05). Earrings are on hold (renders too small with drawn assets); SplitHair is dropped (no per-side frizz score).
 - **ROIs** are built in a face-aligned frame (signed distance from midline × position along midline), which gives exact mirror-image ROIs with equal area and handles head roll without polygon clipping.
