@@ -11,3 +11,8 @@ test-results/
 playwright-report/
 .playwright-mcp/
 tests/fixtures/youcam/*/result.*
+.open-next/
+.wrangler/
+face_views/
+splitside-chat.txt
+.dev.vars*

@@ -13,7 +13,7 @@ Skin AI track, [YouCam API Skin AI & eCommerce VTO Hackathon](https://youcam-api
 
 <img src="docs/gifs/landing.gif" alt="Scrolling the SplitSide landing page: a face in the scanner oval gets its mesh drawn, then splits into a blue treated half and an amber control half" width="280" />
 
-**Demo video:** _link added at submission_ · **Live app:** _link added after deploy_
+**Demo video:** _link added at submission_ · **Live app:** https://splitside.zen-web.workers.dev
 
 </div>
 
@@ -195,13 +195,23 @@ npm run dev                  # http://localhost:3000
 | `GROQ_API_KEY` | No | Trial assistant; falls back to engine text without it |
 | `GROQ_MODEL` | No | Defaults to `openai/gpt-oss-120b` |
 
-The demo works with no keys. The camera needs HTTPS on phones: use a Vercel deployment, or `npx next dev --experimental-https` on your LAN.
+The demo works with no keys. The camera needs HTTPS on phones: use the Cloudflare deployment, or `npx next dev --experimental-https` on your LAN.
 
 ```bash
 npm test                     # unit tests: no network, no units spent
 npm run lint
 npm run build
 node scripts/record-gifs.mjs # re-record README GIFs (needs the dev server on :3100)
+```
+
+### Deploy (Cloudflare Workers)
+
+The app runs on Cloudflare Workers through [OpenNext](https://opennext.js.org/cloudflare). Log in once with `npx wrangler login`, then:
+
+```bash
+npx wrangler secret put YOUCAM_API_KEY
+npx wrangler secret put GROQ_API_KEY
+npm run cf:deploy            # build + deploy; non-secret vars live in wrangler.jsonc
 ```
 
 In development, `/dev/youcam` runs one photo through the full pipeline and shows the measured areas.
