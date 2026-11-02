@@ -9,14 +9,14 @@
 **Measure what works. Preview before you buy. Always half-and-half, always honest.**
 
 [![Live app](https://img.shields.io/badge/Live_app-splitside.zen--web.workers.dev-356a33?style=for-the-badge&logo=cloudflare&logoColor=white)](https://splitside.zen-web.workers.dev)
-[![Watch the film](https://img.shields.io/badge/Watch_the_film-2:52-285fa9?style=for-the-badge&logo=youtube&logoColor=white)](https://splitside-media.zen-web.workers.dev)
+[![Watch on YouTube](https://img.shields.io/badge/Watch_on_YouTube-2:52-ff0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtu.be/FYrJWxnps3M)
 [![Hackathon](https://img.shields.io/badge/YouCam_API-Hackathon_2026-8a5510?style=for-the-badge)](https://youcam-api-skin-ai-ecommerce.devpost.com/)
 
 ![Next.js 16](https://img.shields.io/badge/Next.js-16-1f2b23?logo=nextdotjs) ![TypeScript strict](https://img.shields.io/badge/TypeScript-strict-285fa9?logo=typescript&logoColor=white) ![YouCam APIs: 9](https://img.shields.io/badge/YouCam%20APIs-9-4b674a) ![Tests: 100 passing](https://img.shields.io/badge/tests-100%20passing-356a33?logo=vitest&logoColor=white) ![Cloudflare Workers](https://img.shields.io/badge/deployed_on-Cloudflare_Workers-f38020?logo=cloudflare&logoColor=white) ![Installable PWA](https://img.shields.io/badge/PWA-installable-4b674a?logo=pwa) ![License: MIT](https://img.shields.io/badge/license-MIT-66766a)
 
-<a href="https://splitside-media.zen-web.workers.dev"><img src="https://splitside-media.zen-web.workers.dev/brand/banner.png" alt="SplitSide: one cheek gets the product, the other is the control. YouCam AI measures both halves of the same photo." width="100%" /></a>
+<a href="https://youtu.be/FYrJWxnps3M"><img src="https://splitside-media.zen-web.workers.dev/brand/banner.png" alt="SplitSide: one cheek gets the product, the other is the control. YouCam AI measures both halves of the same photo." width="100%" /></a>
 
-[**Live app**](https://splitside.zen-web.workers.dev) · [**Film**](https://splitside-media.zen-web.workers.dev) · [**How it works**](#how-it-works) · [**YouCam usage and proof**](#youcam-api-usage-and-proof) · [**Setup**](#setup) · [**Docs**](docs/)
+[**Live app**](https://splitside.zen-web.workers.dev) · [**Film**](https://youtu.be/FYrJWxnps3M) · [**How it works**](#how-it-works) · [**YouCam usage and proof**](#youcam-api-usage-and-proof) · [**Setup**](#setup) · [**Docs**](docs/)
 
 An at-home split-face skincare trial app, built on the YouCam API for the Skin AI track of the [YouCam API Skin AI & eCommerce VTO Hackathon](https://youcam-api-skin-ai-ecommerce.devpost.com/).
 
@@ -27,9 +27,9 @@ An at-home split-face skincare trial app, built on the YouCam API for the Skin A
 ## Watch the film
 
 <div align="center">
-<a href="https://splitside-media.zen-web.workers.dev"><img src="https://splitside-media.zen-web.workers.dev/brand/film-poster.jpg" alt="SplitSide film poster: play the 2-minute-52 film" width="80%" /></a>
+<a href="https://youtu.be/FYrJWxnps3M"><img src="https://splitside-media.zen-web.workers.dev/brand/film-poster.jpg" alt="SplitSide film poster: play the 2-minute-52 film" width="80%" /></a>
 
-**[▶ Play the 2:52 film](https://splitside-media.zen-web.workers.dev)**: problem, method, the real app on a phone, and the verdict.
+**[▶ Watch the 2:52 film on YouTube](https://youtu.be/FYrJWxnps3M)** (or [play it from Cloudflare](https://splitside-media.zen-web.workers.dev)): problem, method, the real app on a phone, and the verdict.
 </div>
 
 ## The problem
@@ -328,7 +328,7 @@ Hoop photo: The Metropolitan Museum of Art, CC0. Product illustrations are origi
 <div align="center">
 <img src="https://splitside-media.zen-web.workers.dev/brand/logo.svg" alt="" width="40" />
 
-**SplitSide** · [Live app](https://splitside.zen-web.workers.dev) · [Film](https://splitside-media.zen-web.workers.dev) · [Docs](docs/) · [Hackathon](https://youcam-api-skin-ai-ecommerce.devpost.com/)
+**SplitSide** · [Live app](https://splitside.zen-web.workers.dev) · [Film](https://youtu.be/FYrJWxnps3M) · [Docs](docs/) · [Hackathon](https://youcam-api-skin-ai-ecommerce.devpost.com/)
 
 <sub>A cosmetic decision tool, not a medical device. Skin measurements by YouCam AI (Perfect Corp).</sub>
 </div>
