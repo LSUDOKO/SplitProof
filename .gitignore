@@ -16,3 +16,4 @@ tests/fixtures/youcam/*/result.*
 face_views/
 splitside-chat.txt
 .dev.vars*
+*.mp4

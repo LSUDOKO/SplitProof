@@ -45,6 +45,8 @@ export default function ScanPage() {
   const [savedScan, setSavedScan] = useState<Scan | null>(null);
   const baselineLandmarks = useRef<{ lm: Landmarks; width: number } | null>(null);
   const capturing = useRef(false);
+  // Why the last capture was refused; shown for a moment so the live hint doesn't hide it.
+  const refused = useRef<{ text: string; until: number } | null>(null);
   const [voice, setVoice] = useState(false);
 
   // Spoken guidance (A10): reads the current hint aloud when switched on.
@@ -89,7 +91,8 @@ export default function ScanPage() {
       }
       const issues = evaluateLight(light, baselineImbalance);
       if (issues.length) {
-        setHint(LIGHT_MESSAGES[issues[0]]);
+        refused.current = { text: LIGHT_MESSAGES[issues[0]], until: performance.now() + 3000 };
+        setHint(refused.current.text);
         capturing.current = false;
         return;
       }
@@ -232,8 +235,9 @@ export default function ScanPage() {
         ];
         const allOk = list.every((c) => c.ok) && poseIssues.length === 0;
         setChecks(list);
+        const held = refused.current && now < refused.current.until ? refused.current.text : null;
         setHint(
-          poseIssues.length ? POSE_MESSAGES[poseIssues[0]] : lightIssues.length ? LIGHT_MESSAGES[lightIssues[0]] : ghost > GHOST_TOLERANCE ? "Line your face up with the outline from your first scan." : "Hold still…",
+          poseIssues.length ? POSE_MESSAGES[poseIssues[0]] : lightIssues.length ? LIGHT_MESSAGES[lightIssues[0]] : ghost > GHOST_TOLERANCE ? "Line your face up with the outline from your first scan." : held ?? "Hold still…",
         );
         drawOverlay(overlayRef.current, W, H, baselineLandmarks.current, allOk);
         if (allOk && pts && pose) {

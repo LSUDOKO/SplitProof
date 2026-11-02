@@ -8,7 +8,7 @@ export const LIGHT_MESSAGES: Record<LightIssue, string> = {
   side_light: "Light is coming from one side. Turn so the light is in front of you.",
   too_dark: "Too dark — face a window or lamp.",
   too_bright: "Too bright — step back from the light.",
-  blurry: "Hold still.",
+  blurry: "Too blurry. Hold the phone steady and wipe the camera lens.",
 };
 
 export interface LightReading {
