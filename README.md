@@ -228,7 +228,7 @@ In development, `/dev/youcam` runs one photo through the full pipeline and shows
 
 - **Not yet proven on a real phone.** Camera capture has been exercised on a fake camera feed and one stock portrait, not a real scan session on a phone.
 - **Thresholds** are the documented starting values and need calibration with more real scans.
-- **SplitHair is beta.** The frizz API returns one level for three views, so SplitHair scores each side from a front view plus that side twice. A successful response hasn't been recorded with real side photos yet.
+- **SplitHair is beta.** The frizz API returns one level for three views, so SplitHair scores each side from a front view plus that side and its mirror image. Verified on real phone photos; frizz has only 4 levels, so it suits big changes.
 - **The evidence board** shows example data. Pooling opt-in results needs a server store.
 - **Barcode camera scanning** needs the browser's `BarcodeDetector` (Android Chrome). Typing the number works everywhere, and Open Beauty Facts doesn't know every product.
 - **Earring images** are one museum hoop in two colours, not a retail catalogue.

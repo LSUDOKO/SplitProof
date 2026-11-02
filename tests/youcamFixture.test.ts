@@ -68,6 +68,11 @@ describe("recorded skin profile responses", () => {
     expect(FitzpatrickResult.parse(AnyTaskStatus.parse(fixture("fitzpatrick")).data.results).fitzpatrick_scale).toBe("II");
   });
 
+  it("parses the hair frizz level", async () => {
+    const { AnyTaskStatus, FrizzResult } = await import("@/lib/youcam/schemas");
+    expect(FrizzResult.parse(AnyTaskStatus.parse(fixture("frizz")).data.results).hair_frizziness).toEqual({ mapping: 2, term: "Frizzy" });
+  });
+
   it("maps head-angle errors to one friendly message", async () => {
     const { extractErrorCode, friendlyMessage } = await import("@/lib/youcam/errors");
     const code = extractErrorCode({ error: "error_face_angle_left_tilt" });

@@ -12,7 +12,7 @@ import { analyseOnYoucam, measureBurdens } from "@/lib/capture/analyse";
 import { grabFrame, portraitCrop, toJpeg } from "@/lib/capture/frame";
 import { blendshape, getLandmarker, toPixels } from "@/lib/capture/landmarks";
 import { setVoiceEnabled, speak, voiceEnabled, voiceSupported } from "@/lib/capture/voice";
-import { LIGHT_MESSAGES, evaluateLight, readLight, type LightIssue } from "@/lib/capture/lightGate";
+import { LIGHT_MESSAGES, evaluateLight, laplacianVariance, readLight, type LightIssue } from "@/lib/capture/lightGate";
 import { BASELINE_SCANS, POSE_GATE } from "@/lib/config";
 import { events as eventsRepo, media as mediaRepo, newId, scans as scansRepo, trials as trialsRepo } from "@/lib/db";
 import { buildRoiIndex, faceGeometry } from "@/lib/split/rois";
@@ -76,13 +76,17 @@ export default function ScanPage() {
       if (!video || !trial || capturing.current) return;
       capturing.current = true;
       navigator.vibrate?.(30);
-      const { canvas, ctx, width, height, scale } = grabFrame(video);
+      const { canvas, ctx, native, width, height, scale } = grabFrame(video);
       const landmarks = landmarksVideo.map(([x, y]) => [x * scale, y * scale] as [number, number]);
-      // Final Light Balance Gate on the exact analysis frame (incl. sharpness).
+      // Final Light Balance Gate on the exact analysis frame; sharpness on the camera's own pixels.
       const img = ctx.getImageData(0, 0, width, height);
       const roi = buildRoiIndex(width, height, faceGeometry(landmarks, "cheeks"));
       const box = framing(landmarks, width, height).box;
       const light = readLight(img, roi, box);
+      if (scale !== 1) {
+        const n = native.canvas;
+        light.sharpness = laplacianVariance(native.getImageData(0, 0, n.width, n.height), { x: box.x / scale, y: box.y / scale, width: box.width / scale, height: box.height / scale });
+      }
       const issues = evaluateLight(light, baselineImbalance);
       if (issues.length) {
         setHint(LIGHT_MESSAGES[issues[0]]);

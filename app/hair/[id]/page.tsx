@@ -133,7 +133,9 @@ export default function HairTrialPage() {
                     className="sr-only"
                     onChange={async (e) => {
                       const f = e.target.files?.[0];
-                      if (f) setViews({ ...views, [x.key]: await prepareView(f) });
+                      if (!f) return;
+                      const view = await prepareView(f);
+                      setViews((cur) => ({ ...cur, [x.key]: view }));
                     }}
                   />
                 </label>

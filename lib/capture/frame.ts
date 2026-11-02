@@ -24,17 +24,25 @@ export function portraitCrop(vw: number, vh: number) {
   return { x: 0, y: Math.round((vh - h) / 2), width: vw, height: h };
 }
 
-/** Un-mirrored frame grab of the portrait crop at analysis size. Never enhanced or filtered (A7). */
+/**
+ * Un-mirrored frame grab of the portrait crop at analysis size. Never enhanced or filtered (A7).
+ * `native` is the same frame at the camera's own resolution: upscaling softens edges, so sharpness is judged there.
+ */
 export function grabFrame(video: HTMLVideoElement) {
   const crop = portraitCrop(video.videoWidth, video.videoHeight);
   const { width, height, scale } = targetSize(crop.width, crop.height);
+  const nativeCanvas = document.createElement("canvas");
+  nativeCanvas.width = crop.width;
+  nativeCanvas.height = crop.height;
+  const native = nativeCanvas.getContext("2d", { willReadFrequently: true })!;
+  native.drawImage(video, crop.x, crop.y, crop.width, crop.height, 0, 0, crop.width, crop.height);
   const canvas = document.createElement("canvas");
   canvas.width = width;
   canvas.height = height;
   const ctx = canvas.getContext("2d", { willReadFrequently: true })!;
   ctx.imageSmoothingQuality = "high";
-  ctx.drawImage(video, crop.x, crop.y, crop.width, crop.height, 0, 0, width, height);
-  return { canvas, ctx, width, height, scale };
+  ctx.drawImage(nativeCanvas, 0, 0, width, height);
+  return { canvas, ctx, native, width, height, scale };
 }
 
 export const toJpeg = (canvas: HTMLCanvasElement) =>
