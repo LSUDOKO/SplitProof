@@ -1,23 +1,36 @@
 <div align="center">
 
+<img src="https://splitside-media.zen-web.workers.dev/brand/logo.svg" alt="SplitSide logo" width="96" />
+
 # SplitSide
 
 ### Your face is the control group.
 
 **Measure what works. Preview before you buy. Always half-and-half, always honest.**
 
-An at-home split-face skincare trial app, built on the YouCam API.
-Skin AI track, [YouCam API Skin AI & eCommerce VTO Hackathon](https://youcam-api-skin-ai-ecommerce.devpost.com/).
+[![Live app](https://img.shields.io/badge/Live_app-splitside.zen--web.workers.dev-356a33?style=for-the-badge&logo=cloudflare&logoColor=white)](https://splitside.zen-web.workers.dev)
+[![Watch the film](https://img.shields.io/badge/Watch_the_film-2:52-285fa9?style=for-the-badge&logo=youtube&logoColor=white)](https://splitside-media.zen-web.workers.dev)
+[![Hackathon](https://img.shields.io/badge/YouCam_API-Hackathon_2026-8a5510?style=for-the-badge)](https://youcam-api-skin-ai-ecommerce.devpost.com/)
 
-![Next.js 16](https://img.shields.io/badge/Next.js-16-1f2b23) ![TypeScript strict](https://img.shields.io/badge/TypeScript-strict-285fa9) ![YouCam APIs: 9](https://img.shields.io/badge/YouCam%20APIs-9-4b674a) ![Tests: 99 passing](https://img.shields.io/badge/tests-99%20passing-356a33) ![Installable PWA](https://img.shields.io/badge/PWA-installable-4b674a) ![License: MIT](https://img.shields.io/badge/license-MIT-66766a)
+![Next.js 16](https://img.shields.io/badge/Next.js-16-1f2b23?logo=nextdotjs) ![TypeScript strict](https://img.shields.io/badge/TypeScript-strict-285fa9?logo=typescript&logoColor=white) ![YouCam APIs: 9](https://img.shields.io/badge/YouCam%20APIs-9-4b674a) ![Tests: 100 passing](https://img.shields.io/badge/tests-100%20passing-356a33?logo=vitest&logoColor=white) ![Cloudflare Workers](https://img.shields.io/badge/deployed_on-Cloudflare_Workers-f38020?logo=cloudflare&logoColor=white) ![Installable PWA](https://img.shields.io/badge/PWA-installable-4b674a?logo=pwa) ![License: MIT](https://img.shields.io/badge/license-MIT-66766a)
 
-<img src="docs/gifs/landing.gif" alt="Scrolling the SplitSide landing page: a face in the scanner oval gets its mesh drawn, then splits into a blue treated half and an amber control half" width="280" />
+<a href="https://splitside-media.zen-web.workers.dev"><img src="https://splitside-media.zen-web.workers.dev/brand/banner.png" alt="SplitSide: one cheek gets the product, the other is the control. YouCam AI measures both halves of the same photo." width="100%" /></a>
 
-**Demo video:** _link added at submission_ · **Live app:** https://splitside.zen-web.workers.dev
+[**Live app**](https://splitside.zen-web.workers.dev) · [**Film**](https://splitside-media.zen-web.workers.dev) · [**How it works**](#how-it-works) · [**YouCam usage and proof**](#youcam-api-usage-and-proof) · [**Setup**](#setup) · [**Docs**](docs/)
+
+An at-home split-face skincare trial app, built on the YouCam API for the Skin AI track of the [YouCam API Skin AI & eCommerce VTO Hackathon](https://youcam-api-skin-ai-ecommerce.devpost.com/).
 
 </div>
 
 ---
+
+## Watch the film
+
+<div align="center">
+<a href="https://splitside-media.zen-web.workers.dev"><img src="https://splitside-media.zen-web.workers.dev/brand/film-poster.jpg" alt="SplitSide film poster: play the 2-minute-52 film" width="80%" /></a>
+
+**[▶ Play the 2:52 film](https://splitside-media.zen-web.workers.dev)**: problem, method, the real app on a phone, and the verdict.
+</div>
 
 ## The problem
 
@@ -31,21 +44,55 @@ Dermatology solved this long ago with the **split-face trial**, where one side o
 
 The answer is **Working, No real difference, or Stop**, delivered before the store's return window closes.
 
-## See it
+## How it works
+
+Every clip below comes from the real app, recorded on a phone emulator with live YouCam calls.
+
+| 1 · The problem | 2 · The method |
+|---|---|
+| <img src="https://splitside-media.zen-web.workers.dev/film/problem.gif" alt="Lighting, sleep, stress and weather chips land on three selfies of the same face" width="100%" /> | <img src="https://splitside-media.zen-web.workers.dev/film/splitface.gif" alt="A face split at the midline: one half gets the product, the other gets nothing" width="100%" /> |
+| Before-and-after selfies measure your week, not the product. | One cheek gets the product, the other is the control. Life cancels out. |
+
+| 3 · Plan a trial | 4 · Guided capture |
+|---|---|
+| <img src="https://splitside-media.zen-web.workers.dev/film/setup.gif" alt="Setting up a trial on the phone; a coin flip picks the treated cheek" width="100%" /> | <img src="https://splitside-media.zen-web.workers.dev/film/capture.gif" alt="Face landmarks guide the scan while light-balance bars check both cheeks" width="100%" /> |
+| Product, goals and return deadline. A coin flip picks the treated cheek. | Face landmarks line up every photo. The Light Balance Gate blocks uneven light. |
+
+| 5 · YouCam masks, split at the midline | 6 · Baseline |
+|---|---|
+| <img src="https://splitside-media.zen-web.workers.dev/film/masks.gif" alt="Real YouCam HD concern masks fanned into layers and cut at the facial midline" width="100%" /> | <img src="https://splitside-media.zen-web.workers.dev/film/baseline.gif" alt="Three baseline scans measure the natural difference between the cheeks" width="100%" /> |
+| One HD mask per concern, cut into treated and control areas. | Three scans learn how your cheeks already differ: your personal noise band. |
+
+| 7 · Day 15 verdict | 8 · Irritation sentinel |
+|---|---|
+| <img src="https://splitside-media.zen-web.workers.dev/film/verdict.gif" alt="Day-15 dashboard: acne area down 26 percent on the treated cheek, verdict Working" width="100%" /> | <img src="https://splitside-media.zen-web.workers.dev/film/stop.gif" alt="Redness rising on the treated side only triggers a Stop with safety advice" width="100%" /> |
+| Statistics decide: the treated cheek beat the noise band twice in a row. | Redness rising on the treated side only? Stop today, with clear advice. |
+
+| 9 · Trial assistant | 10 · Half-face shade swatch |
+|---|---|
+| <img src="https://splitside-media.zen-web.workers.dev/film/assistant.gif" alt="Chat with the trial assistant explaining the numbers" width="100%" /> | <img src="https://splitside-media.zen-web.workers.dev/film/shade.gif" alt="Foundation shade previewed on half the face next to bare skin" width="100%" /> |
+| An LLM with tools over your numbers. It explains them and never makes them up. | Skin tone and Fitzpatrick type shortlist shades. Try one on half your face. |
+
+| 11 · Hair colour and SplitHair | 12 · Keep or return |
+|---|---|
+| <img src="https://splitside-media.zen-web.workers.dev/film/hair.gif" alt="Two hair colours previewed, one per side of the head" width="100%" /> | <img src="https://splitside-media.zen-web.workers.dev/film/impact.gif" alt="Keep and return lanes, a day-3 stop, and the chart crossing the noise band" width="100%" /> |
+| Two colours, one per side. Even frizz, measured side by side. | Keep what works. Return what doesn't, before the window closes. |
+
+### More of the app
 
 | Onboarding | A trial, start to verdict | Irritation stop |
 |---|---|---|
-| ![Welcome flow with intro slides, name and theme choice](docs/gifs/onboarding.gif) | ![Home, dashboard and verdict for a demo trial](docs/gifs/trial.gif) | ![A stop verdict with safety advice](docs/gifs/stop.gif) |
+| ![Welcome flow with intro slides, name and theme choice](https://splitside-media.zen-web.workers.dev/app/onboarding.gif) | ![Home, dashboard and verdict for a demo trial](https://splitside-media.zen-web.workers.dev/app/trial.gif) | ![A stop verdict with safety advice](https://splitside-media.zen-web.workers.dev/app/stop.gif) |
 
-| Money saved | Light and dark themes |
-|---|---|
-| ![Skin Passport with the money-saved tracker](docs/gifs/passport.gif) | ![Switching between light and dark themes](docs/gifs/theme.gif) |
-
-All recordings use the app's clearly labelled demo data. No real faces.
+| Money saved | Light and dark themes | Landing page |
+|---|---|---|
+| ![Skin Passport with the money-saved tracker](https://splitside-media.zen-web.workers.dev/app/passport.gif) | ![Switching between light and dark themes](https://splitside-media.zen-web.workers.dev/app/theme.gif) | ![Landing page scroll story](https://splitside-media.zen-web.workers.dev/app/landing.gif) |
 
 | Home | Scanner | Verdict | Preview | Assistant | Dark |
 |---|---|---|---|---|---|
-| ![Home](docs/screenshots/home.png) | ![Scanner](docs/screenshots/scanner.png) | ![Verdict](docs/screenshots/verdict.png) | ![Preview](docs/screenshots/preview.png) | ![Assistant](docs/screenshots/assistant.png) | ![Dark](docs/screenshots/home-dark.png) |
+| ![Home](https://splitside-media.zen-web.workers.dev/screens/home.png) | ![Scanner](https://splitside-media.zen-web.workers.dev/screens/scanner.png) | ![Verdict](https://splitside-media.zen-web.workers.dev/screens/verdict.png) | ![Preview](https://splitside-media.zen-web.workers.dev/screens/preview.png) | ![Assistant](https://splitside-media.zen-web.workers.dev/screens/assistant.png) | ![Dark](https://splitside-media.zen-web.workers.dev/screens/home-dark.png) |
+
+The film and the 12 clips above show the maker's own face, used with consent. The day-15 results come from the app's seeded trial, which the app labels "Demo data". The smaller recordings use demo data and no real faces. All media is served from Cloudflare at [`splitside-media.zen-web.workers.dev`](https://splitside-media.zen-web.workers.dev).
 
 **Try it without a camera:** open the app and tap *Explore a demo trial*.
 
@@ -97,7 +144,7 @@ Half simulated product, half the real you, in one photo. Always labelled *Previe
 
 ### YouCam (9 APIs)
 
-Every API has a real recorded response in [`tests/fixtures/youcam/`](tests/fixtures/youcam), checked by tests. The one exception is frizz, where only an error response is recorded so far (see [Known limits](#known-limits)).
+Every API has a real recorded response in [`tests/fixtures/youcam/`](tests/fixtures/youcam), checked by tests.
 
 | API | Endpoint (`/s2s/v2.0/task/…`) | Why SplitSide uses it |
 |---|---|---|
@@ -116,6 +163,37 @@ The file upload (`POST /s2s/v2.0/file` plus presigned PUT) and credit endpoints 
 **Deliberately not used on analysis photos:** lighting, colour correction, enhancement, face reshape or any beauty filter. Those would fake the measurement. Aging simulation and face swap are excluded too.
 
 A finding worth sharing: **HD masks are display overlays, not plain alpha maps.** Undetected pixels are a grey `#3D3D3D` dimming layer, and detections are coloured with alpha on a per-concern scale. See [`lib/split/burden.ts`](lib/split/burden.ts) and [`docs/05-youcam-api-reference.md`](docs/05-youcam-api-reference.md).
+
+### YouCam API usage and proof
+
+Every number SplitSide shows comes from a real YouCam call. Here is how to check that.
+
+| Proof | Where |
+|---|---|
+| **10 recorded real responses**, one per API plus an error case, each parsed by a test | [`tests/fixtures/youcam/`](tests/fixtures/youcam) · [`tests/youcamFixture.test.ts`](tests/youcamFixture.test.ts) |
+| **Real HD concern masks** saved from a live skin-analysis task and used by the split-engine tests | [`tests/fixtures/youcam/cheeks-hd/masks`](tests/fixtures/youcam/cheeks-hd/masks) · clip 5 above |
+| **Live account balance** on 2 Nov 2026 from `GET /s2s/v1.0/client/credit`: 364 units left on the 1,000-unit hackathon grant, plus a 40-unit token | The in-app dev panel calls [`/api/credits`](app/api/credits/route.ts) |
+| **The key stays on the server.** Route handlers proxy every call, and the key was checked to be absent from the built client bundle | [`lib/youcam/client.ts`](lib/youcam/client.ts) · [`app/api/`](app/api) |
+| **Live in production** on Cloudflare Workers, with keys set as Worker secrets | [splitside.zen-web.workers.dev](https://splitside.zen-web.workers.dev) |
+
+How a scan uses the API:
+
+```mermaid
+sequenceDiagram
+  participant P as Phone (PWA)
+  participant R as /api/scan (Worker)
+  participant Y as YouCam API
+  P->>P: Pose gate + Light Balance Gate, un-enhanced JPEG
+  P->>R: photo
+  R->>Y: POST /s2s/v2.0/file (upload slot), PUT image
+  R->>Y: POST /s2s/v2.0/task/skin-analysis (8 HD concerns, separate masks)
+  loop until success or error
+    R->>Y: GET /s2s/v2.0/task/skin-analysis/{task_id}
+  end
+  Y-->>R: raw scores + one mask per concern
+  R-->>P: scores + masks (stored on the phone at once, since YouCam deletes results after 24 h)
+  P->>P: Split engine: treated vs control burden, then the verdict statistics
+```
 
 ### Third-party
 
@@ -226,7 +304,7 @@ In development, `/dev/youcam` runs one photo through the full pipeline and shows
 
 ## Known limits
 
-- **Not yet proven on a real phone.** Camera capture has been exercised on a fake camera feed and one stock portrait, not a real scan session on a phone.
+- **Not yet proven on a real phone.** Camera capture has been exercised on an emulator fed with real face photos, not yet in a live scan session on a phone.
 - **Thresholds** are the documented starting values and need calibration with more real scans.
 - **SplitHair is beta.** The frizz API returns one level for three views, so SplitHair scores each side from a front view plus that side and its mirror image. Verified on real phone photos; frizz has only 4 levels, so it suits big changes.
 - **The evidence board** shows example data. Pooling opt-in results needs a server store.
@@ -244,3 +322,13 @@ Hoop photo: The Metropolitan Museum of Art, CC0. Product illustrations are origi
 ## License
 
 [MIT](LICENSE)
+
+---
+
+<div align="center">
+<img src="https://splitside-media.zen-web.workers.dev/brand/logo.svg" alt="" width="40" />
+
+**SplitSide** · [Live app](https://splitside.zen-web.workers.dev) · [Film](https://splitside-media.zen-web.workers.dev) · [Docs](docs/) · [Hackathon](https://youcam-api-skin-ai-ecommerce.devpost.com/)
+
+<sub>A cosmetic decision tool, not a medical device. Skin measurements by YouCam AI (Perfect Corp).</sub>
+</div>
