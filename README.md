@@ -204,6 +204,24 @@ sequenceDiagram
 | [Open-Meteo](https://open-meteo.com) | Humidity, UV and air quality per scan, opt-in, location rounded to about 10 km | No |
 | [MediaPipe](https://ai.google.dev/edge/mediapipe) | Face landmarks in the browser, self-hosted | No |
 
+## Tech stack
+
+| Layer | Technology |
+|---|---|
+| **AI and measurement** | YouCam API: 9 APIs (Skin Analysis HD, Skin Simulation, Makeup VTO, Hair Color VTO, Earrings VTO, Skin Tone, Fitzpatrick, Hair Frizz, Background Blur) |
+| **Framework** | Next.js 16 (App Router, Route Handlers), React 19, TypeScript (strict) |
+| **Styling and motion** | Tailwind CSS v4, GSAP 3 (`@gsap/react`), Lucide icons |
+| **On-device vision** | MediaPipe Face Landmarker (`@mediapipe/tasks-vision`, self-hosted WASM), Canvas / OffscreenCanvas |
+| **Image maths** | Own split engine, Light Balance Gate, CIELAB + CIEDE2000 seam score, per-concern mask decoding |
+| **Statistics** | Own verdict engine: asymmetry index, baseline noise band (SDC), difference-in-differences, irritation sentinel |
+| **AI agent** | Groq (`openai/gpt-oss-120b`), OpenAI-compatible tool calling over plain `fetch`, safety guard in code |
+| **Data and validation** | IndexedDB via `idb` (on-device only, no accounts), Zod 4 on every external response |
+| **Charts** | Recharts 3 |
+| **Integrations** | Open Beauty Facts (barcodes), Open-Meteo (humidity, UV, air quality) |
+| **App shell** | Installable PWA: web manifest, service worker, offline shell |
+| **Hosting** | Cloudflare Workers via OpenNext (`@opennextjs/cloudflare`), Wrangler, keys as Worker secrets |
+| **Testing and quality** | Vitest (100 tests, recorded real API fixtures), fake-indexeddb, ESLint, Playwright (emulator recordings) |
+
 ## Architecture
 
 ```mermaid
